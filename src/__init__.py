@@ -1,0 +1,1 @@
+"""Betting application package."""
