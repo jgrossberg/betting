@@ -1,5 +1,5 @@
 """Service for placing and managing bets."""
-from datetime import datetime
+from datetime import datetime, timezone
 from decimal import Decimal
 from typing import Optional
 from uuid import UUID
@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 
 from src.models import User, Game, Bet, BetType, BetSelection, BetStatus, GameStatus
 from src.services.odds_calculator import calculate_payout
+from src.repositories import UserRepository, GameRepository, BetRepository
 
 
 class BettingError(Exception):
@@ -30,6 +31,9 @@ class BettingService:
 
     def __init__(self, session: Session):
         self.session = session
+        self.user_repo = UserRepository(session)
+        self.game_repo = GameRepository(session)
+        self.bet_repo = BetRepository(session)
 
     def place_bet(
         self,
@@ -59,7 +63,7 @@ class BettingService:
         if stake <= 0:
             raise InvalidBetError("Stake must be greater than 0")
 
-        user = self.session.get(User, user_id)
+        user = self.user_repo.find_by_id(user_id)
         if not user:
             raise InvalidBetError("User not found")
 
@@ -68,14 +72,14 @@ class BettingService:
                 f"Insufficient balance. Available: ${user.balance}, Required: ${stake}"
             )
 
-        game = self.session.get(Game, game_id)
+        game = self.game_repo.find_by_id(game_id)
         if not game:
             raise InvalidBetError("Game not found")
 
         if game.status != GameStatus.UPCOMING:
             raise InvalidBetError("Cannot bet on a game that has already started or completed")
 
-        if game.commence_time <= datetime.utcnow():
+        if game.commence_time <= datetime.now():
             raise InvalidBetError("Game has already started")
 
         # Get odds for the bet type and selection
@@ -94,7 +98,7 @@ class BettingService:
             selection=selection,
             odds=odds,
             stake=stake,
-            potential_payout=potential_payout,
+        potential_payout=potential_payout,
             status=BetStatus.PENDING,
         )
 
@@ -102,8 +106,8 @@ class BettingService:
         user.balance -= stake
 
         # Save to database
-        self.session.add(bet)
-        self.session.commit()
+        self.bet_repo.save(bet)
+        self.bet_repo.commit()
         self.session.refresh(bet)
 
         return bet
@@ -142,25 +146,15 @@ class BettingService:
 
     def get_user_balance(self, user_id: UUID) -> Decimal:
         """Get current user balance."""
-        user = self.session.get(User, user_id)
+        user = self.user_repo.find_by_id(user_id)
         if not user:
             raise InvalidBetError("User not found")
         return user.balance
 
     def get_pending_bets(self, user_id: UUID) -> list[Bet]:
         """Get all pending bets for a user."""
-        return (
-            self.session.query(Bet)
-            .filter_by(user_id=user_id, status=BetStatus.PENDING)
-            .all()
-        )
+        return self.bet_repo.find_pending_bets_by_user(user_id)
 
     def get_bet_history(self, user_id: UUID, limit: int = 50) -> list[Bet]:
         """Get bet history for a user."""
-        return (
-            self.session.query(Bet)
-            .filter_by(user_id=user_id)
-            .order_by(Bet.created_at.desc())
-            .limit(limit)
-            .all()
-        )
+        return self.bet_repo.find_bet_history_by_user(user_id, limit)

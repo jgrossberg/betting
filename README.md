@@ -1,70 +1,102 @@
-# NBA Betting CLI Application
+# NBA Betting CLI
 
-A command-line betting application for NBA games with balance tracking.
+A Python-based command-line application for simulating NBA betting. Fetches real-time odds and scores from The Odds API, manages bets, and settles winnings.
 
-## Project Structure
+## Features
 
+- Fetch live NBA odds (moneyline, spread, over/under)
+- Interactive CLI for placing bets
+- Automatic bet settlement based on game results
+- Track user balance and betting history
+- Dry-run mode to preview settlements before committing
+
+## Prerequisites
+
+- Python 3.10+
+- The Odds API key (free tier available at https://the-odds-api.com/)
+
+## Installation
+
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd betting
 ```
-betting/
-├── src/
-│   ├── models/          # Database models
-│   │   ├── user.py      # User model with balance
-│   │   ├── game.py      # Game model with odds
-│   │   └── bet.py       # Bet model with status tracking
-│   ├── services/        # Business logic (to be implemented)
-│   ├── cli/             # CLI interface (to be implemented)
-│   ├── database.py      # Database connection and session management
-│   └── config.py        # Application configuration
-├── init_db.py           # Database initialization script
-├── requirements.txt     # Python dependencies
-└── .env.example         # Example environment variables
+
+2. Install dependencies:
+```bash
+pip install -r requirements.txt
 ```
 
-## Database Schema
+3. Set up environment variables:
 
-### Users Table
-- `id`: Primary key
-- `username`: Unique username
-- `balance`: Current balance (default: $1000.00)
-- `created_at`, `updated_at`: Timestamps
+Create a `.env` file in the project root:
+```
+ODDS_API_KEY=your_api_key_here
+ODDS_API_BASE_URL=https://api.the-odds-api.com/v4
+ODDS_API_SPORT=basketball_nba
+DATABASE_URL=sqlite:///betting.db
+```
 
-### Games Table
-- `id`: Primary key
-- `external_id`: Unique ID from odds API
-- `home_team`, `away_team`: Team names
-- `commence_time`: When the game starts
-- `home_moneyline`, `away_moneyline`: Moneyline odds
-- `home_spread`, `home_spread_odds`: Home spread and odds
-- `away_spread`, `away_spread_odds`: Away spread and odds
-- `total_points`, `over_odds`, `under_odds`: Totals betting
-- `home_score`, `away_score`: Final scores (null until complete)
-- `status`: UPCOMING, IN_PROGRESS, or COMPLETED
-- `created_at`, `updated_at`: Timestamps
+4. Initialize the database:
+```bash
+python init_db.py
+```
 
-### Bets Table
-- `id`: Primary key
-- `user_id`: Foreign key to users
-- `game_id`: Foreign key to games
-- `bet_type`: MONEYLINE, SPREAD, or OVER_UNDER
-- `selection`: "home", "away", "over", or "under"
-- `odds`: American odds at time of bet
-- `stake`: Amount wagered
-- `potential_payout`: Total return if bet wins
-- `status`: PENDING, WON, LOST, or PUSH
-- `settled_at`: When bet was settled (null if pending)
-- `created_at`, `updated_at`: Timestamps
+This creates the SQLite database and sets up a default user with $1000 balance.
 
-## Setup (Not Yet Ready to Run)
+## Usage
 
-This is the initial schema setup. Before running:
+### 1. Fetch Games
 
-1. Review the database models in `src/models/`
-2. Confirm the schema meets requirements
-3. Next steps will include implementing betting logic and CLI
+Fetch upcoming NBA games with odds from The Odds API:
 
-## Notes
+```bash
+python fetch_games.py
+```
 
-- Using SQLAlchemy ORM with SQLite
-- American odds format (e.g., +150, -110)
-- Push handling for ties (stake returned)
-- The Odds API for live NBA odds
+This populates the database with games, odds, and betting lines.
+
+### 2. Place Bets
+
+Launch the interactive betting CLI:
+
+```bash
+python place_bets.py
+```
+
+The CLI will:
+- Display each upcoming game with available odds
+- Prompt you to select bet type (moneyline, spread, over/under)
+- Let you choose your selection and stake amount
+- Deduct your stake from your balance immediately
+
+### 3. Settle Bets
+
+After games complete, settle your pending bets:
+
+**Preview settlements (dry-run):**
+```bash
+python settle_bets.py --dry-run
+```
+
+This shows you which bets will win/lose/push without making any changes.
+
+**Actually settle bets:**
+```bash
+python settle_bets.py
+```
+
+This will:
+- Check for games that are IN_PROGRESS
+- Fetch final scores from The Odds API
+- Mark games as COMPLETED
+- Settle all pending bets and update user balances
+
+## Development
+
+Run tests:
+```bash
+pytest
+```
+

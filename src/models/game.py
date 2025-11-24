@@ -25,7 +25,6 @@ class Game(Base):
     home_team: Mapped[str] = mapped_column(String(100), nullable=False)
     away_team: Mapped[str] = mapped_column(String(100), nullable=False)
 
-    # Game timing
     commence_time: Mapped[datetime] = mapped_column(DateTime, nullable=False)
 
     # Moneyline odds (American format, e.g., +150, -110)
