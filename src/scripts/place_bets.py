@@ -1,4 +1,5 @@
 """Interactive CLI for placing bets on games."""
+
 from decimal import Decimal
 from src.database import get_database
 from src.config import config
@@ -36,7 +37,7 @@ def prompt_for_bet(game: Game, user_id, service: BettingService):
 
     bet_choice = input("\nPlace a bet on this game? (y/n/skip): ").lower().strip()
 
-    if bet_choice not in ['y', 'yes']:
+    if bet_choice not in ["y", "yes"]:
         print("Skipping...")
         return
 
@@ -60,14 +61,24 @@ def prompt_for_bet(game: Game, user_id, service: BettingService):
     bet_type = bet_type_map[bet_type_choice]
 
     if bet_type == BetType.MONEYLINE:
-        selection_choice = input(f"Pick Home ({game.home_team}) or Away ({game.away_team})? (h/a): ").lower().strip()
-        selection = BetSelection.HOME if selection_choice == 'h' else BetSelection.AWAY
+        selection_choice = (
+            input(f"Pick Home ({game.home_team}) or Away ({game.away_team})? (h/a): ")
+            .lower()
+            .strip()
+        )
+        selection = BetSelection.HOME if selection_choice == "h" else BetSelection.AWAY
     elif bet_type == BetType.SPREAD:
-        selection_choice = input(f"Pick Home {game.home_spread} or Away {game.away_spread}? (h/a): ").lower().strip()
-        selection = BetSelection.HOME if selection_choice == 'h' else BetSelection.AWAY
+        selection_choice = (
+            input(f"Pick Home {game.home_spread} or Away {game.away_spread}? (h/a): ")
+            .lower()
+            .strip()
+        )
+        selection = BetSelection.HOME if selection_choice == "h" else BetSelection.AWAY
     else:  # OVER_UNDER
-        selection_choice = input(f"Pick Over or Under {game.total_points}? (o/u): ").lower().strip()
-        selection = BetSelection.OVER if selection_choice == 'o' else BetSelection.UNDER
+        selection_choice = (
+            input(f"Pick Over or Under {game.total_points}? (o/u): ").lower().strip()
+        )
+        selection = BetSelection.OVER if selection_choice == "o" else BetSelection.UNDER
 
     stake_input = input("Enter stake amount: $").strip()
     try:
@@ -86,9 +97,9 @@ def prompt_for_bet(game: Game, user_id, service: BettingService):
 
 
 def main():
-    print("="*60)
+    print("=" * 60)
     print("NBA BETTING - PLACE BETS")
-    print("="*60)
+    print("=" * 60)
 
     db = get_database(config.DATABASE_URL)
 
@@ -119,9 +130,9 @@ def main():
             session.refresh(user)
             print(f"\nRemaining balance: ${user.balance}")
 
-        print("\n" + "="*60)
+        print("\n" + "=" * 60)
         print("Done placing bets!")
-        print("="*60)
+        print("=" * 60)
 
 
 if __name__ == "__main__":

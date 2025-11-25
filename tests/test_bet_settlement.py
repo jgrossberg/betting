@@ -47,23 +47,33 @@ class TestSpread:
 
 class TestOverUnder:
     def test_over_wins(self):
-        result = determine_over_under_outcome(BetSelection.OVER, Decimal("215.5"), 110, 108)
+        result = determine_over_under_outcome(
+            BetSelection.OVER, Decimal("215.5"), 110, 108
+        )
         assert result == BetStatus.WON
 
     def test_over_loses(self):
-        result = determine_over_under_outcome(BetSelection.OVER, Decimal("215.5"), 105, 108)
+        result = determine_over_under_outcome(
+            BetSelection.OVER, Decimal("215.5"), 105, 108
+        )
         assert result == BetStatus.LOST
 
     def test_under_wins(self):
-        result = determine_over_under_outcome(BetSelection.UNDER, Decimal("215.5"), 105, 108)
+        result = determine_over_under_outcome(
+            BetSelection.UNDER, Decimal("215.5"), 105, 108
+        )
         assert result == BetStatus.WON
 
     def test_under_loses(self):
-        result = determine_over_under_outcome(BetSelection.UNDER, Decimal("215.5"), 110, 108)
+        result = determine_over_under_outcome(
+            BetSelection.UNDER, Decimal("215.5"), 110, 108
+        )
         assert result == BetStatus.LOST
 
     def test_push_on_exact_total(self):
-        result = determine_over_under_outcome(BetSelection.OVER, Decimal("216"), 110, 106)
+        result = determine_over_under_outcome(
+            BetSelection.OVER, Decimal("216"), 110, 106
+        )
         assert result == BetStatus.PUSH
 
 

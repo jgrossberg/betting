@@ -16,7 +16,9 @@ class TheOddsApiClient:
         if not self.api_key:
             raise OddsAPIError("ODDS_API_KEY not configured")
 
-    def get_nba_games(self, markets: str = "h2h,spreads,totals") -> List[Dict[str, Any]]:
+    def get_nba_games(
+        self, markets: str = "h2h,spreads,totals"
+    ) -> List[Dict[str, Any]]:
         """
         Fetch NBA games and return parsed data ready for database insertion.
 
@@ -37,9 +39,15 @@ class TheOddsApiClient:
             List of score dictionaries with external_id, home_score, away_score, completed
         """
         raw_data = self._fetch_nba_scores(days_from)
-        return [OddsParser.parse_scores(score_data) for score_data in raw_data if score_data.get("completed")]
+        return [
+            OddsParser.parse_scores(score_data)
+            for score_data in raw_data
+            if score_data.get("completed")
+        ]
 
-    def _fetch_nba_odds(self, markets: str = "h2h,spreads,totals") -> List[Dict[str, Any]]:
+    def _fetch_nba_odds(
+        self, markets: str = "h2h,spreads,totals"
+    ) -> List[Dict[str, Any]]:
         """Internal method to fetch raw odds data from API."""
         url = f"{self.base_url}/sports/upcoming/odds"
 
@@ -77,9 +85,7 @@ class TheOddsApiClient:
 
     def check_usage(self) -> Dict[str, Any]:
         response = requests.get(
-            f"{self.base_url}/sports",
-            params={"apiKey": self.api_key},
-            timeout=10
+            f"{self.base_url}/sports", params={"apiKey": self.api_key}, timeout=10
         )
 
         return {

@@ -1,4 +1,5 @@
 """Service for placing and managing bets."""
+
 from datetime import datetime, timezone
 from decimal import Decimal
 from typing import Optional
@@ -13,16 +14,19 @@ from src.repositories import UserRepository, GameRepository, BetRepository
 
 class BettingError(Exception):
     """Base exception for betting errors."""
+
     pass
 
 
 class InsufficientBalanceError(BettingError):
     """Raised when user has insufficient balance."""
+
     pass
 
 
 class InvalidBetError(BettingError):
     """Raised when bet parameters are invalid."""
+
     pass
 
 
@@ -77,7 +81,9 @@ class BettingService:
             raise InvalidBetError("Game not found")
 
         if game.status != GameStatus.UPCOMING:
-            raise InvalidBetError("Cannot bet on a game that has already started or completed")
+            raise InvalidBetError(
+                "Cannot bet on a game that has already started or completed"
+            )
 
         if game.commence_time <= datetime.now():
             raise InvalidBetError("Game has already started")
@@ -85,7 +91,9 @@ class BettingService:
         # Get odds for the bet type and selection
         odds = self._get_odds(game, bet_type, selection)
         if odds is None:
-            raise InvalidBetError(f"Odds not available for {bet_type.value} - {selection}")
+            raise InvalidBetError(
+                f"Odds not available for {bet_type.value} - {selection}"
+            )
 
         # Calculate potential payout
         potential_payout = calculate_payout(stake, odds)
@@ -98,7 +106,7 @@ class BettingService:
             selection=selection,
             odds=odds,
             stake=stake,
-        potential_payout=potential_payout,
+            potential_payout=potential_payout,
             status=BetStatus.PENDING,
         )
 
@@ -112,7 +120,9 @@ class BettingService:
 
         return bet
 
-    def _get_odds(self, game: Game, bet_type: BetType, selection: BetSelection) -> Optional[Decimal]:
+    def _get_odds(
+        self, game: Game, bet_type: BetType, selection: BetSelection
+    ) -> Optional[Decimal]:
         """
         Get odds for a specific bet type and selection.
 

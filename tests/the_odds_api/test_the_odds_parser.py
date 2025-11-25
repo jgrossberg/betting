@@ -19,26 +19,34 @@ def test_parse_complete_game():
                         "key": "h2h",
                         "outcomes": [
                             {"name": "Los Angeles Lakers", "price": -110},
-                            {"name": "Golden State Warriors", "price": 120}
-                        ]
+                            {"name": "Golden State Warriors", "price": 120},
+                        ],
                     },
                     {
                         "key": "spreads",
                         "outcomes": [
-                            {"name": "Los Angeles Lakers", "price": -110, "point": -5.5},
-                            {"name": "Golden State Warriors", "price": -110, "point": 5.5}
-                        ]
+                            {
+                                "name": "Los Angeles Lakers",
+                                "price": -110,
+                                "point": -5.5,
+                            },
+                            {
+                                "name": "Golden State Warriors",
+                                "price": -110,
+                                "point": 5.5,
+                            },
+                        ],
                     },
                     {
                         "key": "totals",
                         "outcomes": [
                             {"name": "Over", "price": -110, "point": 215.5},
-                            {"name": "Under", "price": -110, "point": 215.5}
-                        ]
-                    }
-                ]
+                            {"name": "Under", "price": -110, "point": 215.5},
+                        ],
+                    },
+                ],
             }
-        ]
+        ],
     }
 
     result = OddsParser.parse_game(game_data)
@@ -66,7 +74,7 @@ def test_parse_game_missing_bookmakers():
         "home_team": "Los Angeles Lakers",
         "away_team": "Golden State Warriors",
         "commence_time": "2024-01-15T19:00:00Z",
-        "bookmakers": []
+        "bookmakers": [],
     }
 
     result = OddsParser.parse_game(game_data)
@@ -92,12 +100,12 @@ def test_parse_game_missing_market():
                         "key": "h2h",
                         "outcomes": [
                             {"name": "Los Angeles Lakers", "price": -110},
-                            {"name": "Golden State Warriors", "price": 120}
-                        ]
+                            {"name": "Golden State Warriors", "price": 120},
+                        ],
                     }
-                ]
+                ],
             }
-        ]
+        ],
     }
 
     result = OddsParser.parse_game(game_data)
@@ -114,7 +122,7 @@ def test_parse_timestamp():
         "home_team": "Lakers",
         "away_team": "Warriors",
         "commence_time": "2024-01-15T19:30:00Z",
-        "bookmakers": []
+        "bookmakers": [],
     }
 
     result = OddsParser.parse_game(game_data)

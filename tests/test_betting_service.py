@@ -37,7 +37,8 @@ def game(db_session: Session):
         external_id="test_game_1",
         home_team="Lakers",
         away_team="Warriors",
-        commence_time=datetime.now(timezone.utc).replace(tzinfo=None) + timedelta(hours=2),
+        commence_time=datetime.now(timezone.utc).replace(tzinfo=None)
+        + timedelta(hours=2),
         home_moneyline=Decimal("-110"),
         away_moneyline=Decimal("120"),
         home_spread=Decimal("-5.5"),

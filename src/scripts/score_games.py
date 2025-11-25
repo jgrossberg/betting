@@ -4,13 +4,16 @@ from src.config import config
 from src.services import GameScoringService, BetSettlementService
 from src.models import BetStatus
 
+
 def main():
-    parser = argparse.ArgumentParser(description="Settle pending bets for completed games")
-    
-    print("="*60)
-    
+    parser = argparse.ArgumentParser(
+        description="Settle pending bets for completed games"
+    )
+
+    print("=" * 60)
+
     print("NBA BETTING - SCORE GAMES")
-    print("="*60)
+    print("=" * 60)
 
     db = get_database(config.DATABASE_URL)
 

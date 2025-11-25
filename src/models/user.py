@@ -16,4 +16,6 @@ class User(Base):
     )
 
     def __repr__(self):
-        return f"<User(id={self.id}, username='{self.username}', balance={self.balance})>"
+        return (
+            f"<User(id={self.id}, username='{self.username}', balance={self.balance})>"
+        )

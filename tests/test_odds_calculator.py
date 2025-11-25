@@ -14,9 +14,13 @@ def test_american_to_decimal_positive_odds():
 
 
 def test_american_to_decimal_negative_odds():
-    assert american_to_decimal_odds(Decimal("-110")) == Decimal("1.909090909090909090909090909")
+    assert american_to_decimal_odds(Decimal("-110")) == Decimal(
+        "1.909090909090909090909090909"
+    )
     assert american_to_decimal_odds(Decimal("-200")) == Decimal("1.5")
-    assert american_to_decimal_odds(Decimal("-150")) == Decimal("1.666666666666666666666666667")
+    assert american_to_decimal_odds(Decimal("-150")) == Decimal(
+        "1.666666666666666666666666667"
+    )
 
 
 def test_calculate_payout_positive_odds():

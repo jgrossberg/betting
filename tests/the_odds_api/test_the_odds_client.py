@@ -22,12 +22,12 @@ def mock_api_response():
                             "key": "h2h",
                             "outcomes": [
                                 {"name": "Lakers", "price": -110},
-                                {"name": "Warriors", "price": 100}
-                            ]
+                                {"name": "Warriors", "price": 100},
+                            ],
                         }
-                    ]
+                    ],
                 }
-            ]
+            ],
         }
     ]
 
@@ -36,7 +36,9 @@ def test_get_nba_games_success(mocker: MockFixture, mock_api_response):
     mock_response = Mock()
     mock_response.json.return_value = mock_api_response
     mock_response.raise_for_status = Mock()
-    mock_get = mocker.patch("src.the_odds_api.client.requests.get", return_value=mock_response)
+    mock_get = mocker.patch(
+        "src.the_odds_api.client.requests.get", return_value=mock_response
+    )
 
     client = TheOddsApiClient(api_key="test_key")
     games = client.get_nba_games()
@@ -56,7 +58,10 @@ def test_get_nba_games_success(mocker: MockFixture, mock_api_response):
 
 
 def test_get_nba_games_api_error(mocker: MockFixture):
-    mocker.patch("src.the_odds_api.client.requests.get", side_effect=requests.RequestException("API Down"))
+    mocker.patch(
+        "src.the_odds_api.client.requests.get",
+        side_effect=requests.RequestException("API Down"),
+    )
 
     client = TheOddsApiClient(api_key="test_key")
 
@@ -75,10 +80,7 @@ def test_client_missing_api_key(mocker: MockFixture):
 
 def test_check_usage(mocker: MockFixture):
     mock_response = Mock()
-    mock_response.headers = {
-        "x-requests-remaining": "450",
-        "x-requests-used": "50"
-    }
+    mock_response.headers = {"x-requests-remaining": "450", "x-requests-used": "50"}
     mocker.patch("src.the_odds_api.client.requests.get", return_value=mock_response)
 
     client = TheOddsApiClient(api_key="test_key")

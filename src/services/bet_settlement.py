@@ -1,4 +1,5 @@
 """Logic for determining bet outcomes based on game results."""
+
 from decimal import Decimal
 from src.models import BetType, BetSelection, BetStatus
 
@@ -24,10 +25,7 @@ def determine_moneyline_outcome(
 
 
 def determine_spread_outcome(
-    selection: BetSelection,
-    spread: Decimal,
-    home_score: int,
-    away_score: int
+    selection: BetSelection, spread: Decimal, home_score: int, away_score: int
 ) -> BetStatus:
     """
     Determine outcome of a spread bet.
@@ -65,10 +63,7 @@ def determine_spread_outcome(
 
 
 def determine_over_under_outcome(
-    selection: BetSelection,
-    total_line: Decimal,
-    home_score: int,
-    away_score: int
+    selection: BetSelection, total_line: Decimal, home_score: int, away_score: int
 ) -> BetStatus:
     """
     Determine outcome of an over/under (totals) bet.
@@ -106,7 +101,7 @@ def settle_bet(
     home_score: int,
     away_score: int,
     spread: Decimal = None,
-    total_line: Decimal = None
+    total_line: Decimal = None,
 ) -> BetStatus:
     """
     Determine the outcome of a bet based on game results.
@@ -136,7 +131,9 @@ def settle_bet(
     elif bet_type == BetType.OVER_UNDER:
         if total_line is None:
             raise ValueError("Total line is required for OVER_UNDER bets")
-        return determine_over_under_outcome(selection, total_line, home_score, away_score)
+        return determine_over_under_outcome(
+            selection, total_line, home_score, away_score
+        )
 
     else:
         raise ValueError(f"Unknown bet type: {bet_type}")

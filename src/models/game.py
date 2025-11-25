@@ -28,17 +28,27 @@ class Game(Base):
     commence_time: Mapped[datetime] = mapped_column(DateTime, nullable=False)
 
     # Moneyline odds (American format, e.g., +150, -110)
-    home_moneyline: Mapped[Optional[Decimal]] = mapped_column(Numeric(10, 2), nullable=True)
-    away_moneyline: Mapped[Optional[Decimal]] = mapped_column(Numeric(10, 2), nullable=True)
+    home_moneyline: Mapped[Optional[Decimal]] = mapped_column(
+        Numeric(10, 2), nullable=True
+    )
+    away_moneyline: Mapped[Optional[Decimal]] = mapped_column(
+        Numeric(10, 2), nullable=True
+    )
 
     # Spread betting
     home_spread: Mapped[Optional[Decimal]] = mapped_column(Numeric(5, 1), nullable=True)
-    home_spread_odds: Mapped[Optional[Decimal]] = mapped_column(Numeric(10, 2), nullable=True)
+    home_spread_odds: Mapped[Optional[Decimal]] = mapped_column(
+        Numeric(10, 2), nullable=True
+    )
     away_spread: Mapped[Optional[Decimal]] = mapped_column(Numeric(5, 1), nullable=True)
-    away_spread_odds: Mapped[Optional[Decimal]] = mapped_column(Numeric(10, 2), nullable=True)
+    away_spread_odds: Mapped[Optional[Decimal]] = mapped_column(
+        Numeric(10, 2), nullable=True
+    )
 
     # Over/Under (Totals)
-    total_points: Mapped[Optional[Decimal]] = mapped_column(Numeric(5, 1), nullable=True)
+    total_points: Mapped[Optional[Decimal]] = mapped_column(
+        Numeric(5, 1), nullable=True
+    )
     over_odds: Mapped[Optional[Decimal]] = mapped_column(Numeric(10, 2), nullable=True)
     under_odds: Mapped[Optional[Decimal]] = mapped_column(Numeric(10, 2), nullable=True)
 

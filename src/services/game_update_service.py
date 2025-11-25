@@ -24,7 +24,9 @@ class GameScoringService:
 
         return self._update_games_from_scores(score_data_list)
 
-    def _update_games_from_scores(self, score_data_list: List[Dict[str, Any]]) -> List[Game]:
+    def _update_games_from_scores(
+        self, score_data_list: List[Dict[str, Any]]
+    ) -> List[Game]:
         updated_games = []
 
         for score_data in score_data_list:

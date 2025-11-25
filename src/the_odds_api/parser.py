@@ -4,7 +4,6 @@ from typing import Dict, Any, Optional
 from src.models import GameStatus
 
 
-
 class OddsParser:
     @staticmethod
     def parse_game(game_data: Dict[str, Any]) -> Dict[str, Any]:

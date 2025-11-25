@@ -8,11 +8,5 @@ class Base(DeclarativeBase):
         DateTime, default=lambda: datetime.now(), nullable=False
     )
     updated_at: Mapped[datetime] = mapped_column(
-        DateTime,
-        default=datetime.now(),
-        onupdate=datetime.now(),
-        nullable=False
+        DateTime, default=datetime.now(), onupdate=datetime.now(), nullable=False
     )
-
-
-    

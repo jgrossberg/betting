@@ -55,13 +55,15 @@ class BetSettlementService:
                     preview_data["push_count"] += 1
                     preview_data["total_payout"] += payout
 
-                preview_data["bets"].append({
-                    "bet": bet,
-                    "game": game,
-                    "outcome": outcome,
-                    "payout": payout,
-                    "user": user,
-                })
+                preview_data["bets"].append(
+                    {
+                        "bet": bet,
+                        "game": game,
+                        "outcome": outcome,
+                        "payout": payout,
+                        "user": user,
+                    }
+                )
 
         return preview_data
 
@@ -72,9 +74,15 @@ class BetSettlementService:
             )
 
         elif bet.bet_type == BetType.SPREAD:
-            spread = game.home_spread if bet.selection.value == "home" else game.away_spread
+            spread = (
+                game.home_spread if bet.selection.value == "home" else game.away_spread
+            )
             return settle_bet(
-                bet.bet_type, bet.selection, game.home_score, game.away_score, spread=spread
+                bet.bet_type,
+                bet.selection,
+                game.home_score,
+                game.away_score,
+                spread=spread,
             )
 
         elif bet.bet_type == BetType.OVER_UNDER:

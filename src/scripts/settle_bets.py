@@ -7,31 +7,36 @@ from src.repositories.game_repository import GameRepository
 from src.services import BetSettlementService
 from src.models import BetStatus
 
+
 def main():
-    parser = argparse.ArgumentParser(description="Settle pending bets for completed games")
+    parser = argparse.ArgumentParser(
+        description="Settle pending bets for completed games"
+    )
     parser.add_argument(
         "--dry-run",
         action="store_true",
-        help="Preview settlements without making any changes"
+        help="Preview settlements without making any changes",
     )
     args = parser.parse_args()
 
-    print("="*60)
+    print("=" * 60)
     if args.dry_run:
         print("NBA BETTING - SETTLE BETS (DRY RUN)")
     else:
         print("NBA BETTING - SETTLE BETS")
-    print("="*60)
+    print("=" * 60)
 
     db = get_database(config.DATABASE_URL)
 
     with db.get_session() as session:
         try:
             print("\nChecking for games with pending bets and updating scores...")
-            
+
             # find any completed games with pending bets
             game_repo = GameRepository(session)
-            finished_games = game_repo.find_games_with_pending_bets(GameStatus.COMPLETED)
+            finished_games = game_repo.find_games_with_pending_bets(
+                GameStatus.COMPLETED
+            )
 
             settlement_service = BetSettlementService(session)
 
@@ -61,8 +66,12 @@ def main():
                     payout = item["payout"]
                     user = item["user"]
 
-                    print(f"\n{game.away_team} @ {game.home_team}: {game.away_score} - {game.home_score}")
-                    print(f"  User: {user.username} | Type: {bet.bet_type.value} | Selection: {bet.selection.value}")
+                    print(
+                        f"\n{game.away_team} @ {game.home_team}: {game.away_score} - {game.home_score}"
+                    )
+                    print(
+                        f"  User: {user.username} | Type: {bet.bet_type.value} | Selection: {bet.selection.value}"
+                    )
                     print(f"  Stake: ${bet.stake} | Outcome: {outcome.value}")
                     if payout > 0:
                         print(f"  Payout: ${payout}")
@@ -83,9 +92,15 @@ def main():
                 print(f"\n{'-'*60}")
                 print(f"Settled {len(settled_bets)} bets:")
 
-                won_count = sum(1 for bet in settled_bets if bet.status == BetStatus.WON)
-                lost_count = sum(1 for bet in settled_bets if bet.status == BetStatus.LOST)
-                push_count = sum(1 for bet in settled_bets if bet.status == BetStatus.PUSH)
+                won_count = sum(
+                    1 for bet in settled_bets if bet.status == BetStatus.WON
+                )
+                lost_count = sum(
+                    1 for bet in settled_bets if bet.status == BetStatus.LOST
+                )
+                push_count = sum(
+                    1 for bet in settled_bets if bet.status == BetStatus.PUSH
+                )
 
                 print(f"  Won: {won_count}")
                 print(f"  Lost: {lost_count}")

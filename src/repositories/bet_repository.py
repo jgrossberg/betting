@@ -8,7 +8,11 @@ class BetRepository:
         self.session = session
 
     def find_pending_bets_by_user(self, user_id) -> List[Bet]:
-        return self.session.query(Bet).filter_by(user_id=user_id, status=BetStatus.PENDING).all()
+        return (
+            self.session.query(Bet)
+            .filter_by(user_id=user_id, status=BetStatus.PENDING)
+            .all()
+        )
 
     def find_all_bets_by_user(self, user_id) -> List[Bet]:
         return self.session.query(Bet).filter_by(user_id=user_id).all()
@@ -23,7 +27,11 @@ class BetRepository:
         )
 
     def find_pending_bets_by_game(self, game_id) -> List[Bet]:
-        return self.session.query(Bet).filter_by(game_id=game_id, status=BetStatus.PENDING).all()
+        return (
+            self.session.query(Bet)
+            .filter_by(game_id=game_id, status=BetStatus.PENDING)
+            .all()
+        )
 
     def save(self, bet: Bet) -> Bet:
         self.session.add(bet)

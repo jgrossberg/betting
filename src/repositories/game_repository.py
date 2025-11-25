@@ -24,16 +24,14 @@ class GameRepository:
                 Game.status == status,
                 exists().where(
                     (Bet.game_id == Game.id) & (Bet.status == BetStatus.PENDING)
-                )
+                ),
             )
             .all()
         )
 
     def find_unfinished_games(self) -> List[Game]:
         return (
-            self.session.query(Game)
-            .filter(Game.status != GameStatus.COMPLETED)
-            .all()
+            self.session.query(Game).filter(Game.status != GameStatus.COMPLETED).all()
         )
 
     def save(self, game: Game) -> Game:

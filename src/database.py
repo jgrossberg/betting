@@ -10,7 +10,9 @@ class Database:
 
     def __init__(self, db_url: str = "sqlite:///betting.db"):
         self.engine = create_engine(db_url, echo=False)
-        self.SessionLocal = sessionmaker(bind=self.engine, autoflush=False, autocommit=False)
+        self.SessionLocal = sessionmaker(
+            bind=self.engine, autoflush=False, autocommit=False
+        )
 
     def create_tables(self):
         Base.metadata.create_all(bind=self.engine)

@@ -40,15 +40,11 @@ class Bet(Base):
     bet_type: Mapped[BetType] = mapped_column(Enum(BetType), nullable=False)
     selection: Mapped[BetSelection] = mapped_column(Enum(BetSelection), nullable=False)
 
-    odds: Mapped[Decimal] = mapped_column(
-        Numeric(10, 2), nullable=False
-    )
+    odds: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False)
 
     stake: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False)
-    
-    potential_payout: Mapped[Decimal] = mapped_column(
-        Numeric(10, 2), nullable=False
-    )
+
+    potential_payout: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False)
 
     status: Mapped[BetStatus] = mapped_column(
         Enum(BetStatus), nullable=False, default=BetStatus.PENDING
