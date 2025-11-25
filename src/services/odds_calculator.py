@@ -1,4 +1,3 @@
-"""Odds calculation utilities for American odds format."""
 from decimal import Decimal
 
 

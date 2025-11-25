@@ -1,7 +1,10 @@
 import argparse
+
 from src.database import get_database
 from src.config import config
-from src.services import GameUpdateService, BetSettlementService
+from src.models.game import GameStatus
+from src.repositories.game_repository import GameRepository
+from src.services import BetSettlementService
 from src.models import BetStatus
 
 def main():
@@ -25,20 +28,16 @@ def main():
     with db.get_session() as session:
         try:
             print("\nChecking for games with pending bets and updating scores...")
-            update_service = GameUpdateService(session)
-            updated_games = update_service.update_completed_games(days_from=1)
-
-            if not updated_games:
-                print("No games with pending bets were updated.")
-                return
-
-            print(f"Updated {len(updated_games)} games")
+            
+            # find any completed games with pending bets
+            game_repo = GameRepository(session)
+            finished_games = game_repo.find_games_with_pending_bets(GameStatus.COMPLETED)
 
             settlement_service = BetSettlementService(session)
 
             if args.dry_run:
                 print("\nPreviewing settlement outcomes...")
-                preview = settlement_service.preview_settlements(updated_games)
+                preview = settlement_service.preview_settlements(finished_games)
 
                 if not preview["bets"]:
                     print("No pending bets to settle.")
@@ -75,7 +74,7 @@ def main():
 
             else:
                 print("\nSettling pending bets...")
-                settled_bets = settlement_service.settle_bets_for_games(updated_games)
+                settled_bets = settlement_service.settle_bets_for_games(finished_games)
 
                 if not settled_bets:
                     print("No pending bets to settle.")

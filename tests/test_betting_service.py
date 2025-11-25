@@ -3,8 +3,12 @@ from decimal import Decimal
 import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm.session import Session
 
-from src.models import Base, User, Game, Bet, BetType, BetSelection, BetStatus, GameStatus
+from src.models.base import Base
+from src.models.bet import BetSelection, BetType
+from src.models.game import Game, GameStatus
+from src.models.user import User
 from src.services import BettingService, InsufficientBalanceError, InvalidBetError
 
 
@@ -19,7 +23,7 @@ def db_session():
 
 
 @pytest.fixture
-def user(db_session):
+def user(db_session: Session):
     user = User(username="testuser", balance=Decimal("1000.00"))
     db_session.add(user)
     db_session.commit()
@@ -28,7 +32,7 @@ def user(db_session):
 
 
 @pytest.fixture
-def game(db_session):
+def game(db_session: Session):
     game = Game(
         external_id="test_game_1",
         home_team="Lakers",
@@ -52,7 +56,7 @@ def game(db_session):
 
 
 class TestPlaceBet:
-    def test_place_moneyline_bet(self, db_session, user, game):
+    def test_place_moneyline_bet(self, db_session: Session, user: User, game: Game):
         service = BettingService(db_session)
 
         bet = service.place_bet(
@@ -70,7 +74,7 @@ class TestPlaceBet:
         db_session.refresh(user)
         assert user.balance == Decimal("900.00")
 
-    def test_place_spread_bet(self, db_session, user, game):
+    def test_place_spread_bet(self, db_session: Session, user: User, game: Game):
         service = BettingService(db_session)
 
         bet = service.place_bet(
@@ -81,7 +85,7 @@ class TestPlaceBet:
         assert bet.selection == BetSelection.AWAY
         assert bet.odds == Decimal("-110")
 
-    def test_insufficient_balance(self, db_session, user, game):
+    def test_insufficient_balance(self, db_session: Session, user: User, game: Game):
         service = BettingService(db_session)
 
         with pytest.raises(InsufficientBalanceError):
@@ -89,7 +93,7 @@ class TestPlaceBet:
                 user.id, game.id, BetType.MONEYLINE, BetSelection.HOME, Decimal("1500")
             )
 
-    def test_negative_stake(self, db_session, user, game):
+    def test_negative_stake(self, db_session: Session, user: User, game: Game):
         service = BettingService(db_session)
 
         with pytest.raises(InvalidBetError, match="Stake must be greater than 0"):
@@ -97,7 +101,7 @@ class TestPlaceBet:
                 user.id, game.id, BetType.MONEYLINE, BetSelection.HOME, Decimal("-10")
             )
 
-    def test_bet_on_started_game(self, db_session, user, game):
+    def test_bet_on_started_game(self, db_session: Session, user: User, game: Game):
         game.status = GameStatus.IN_PROGRESS
         db_session.commit()
 
@@ -108,7 +112,7 @@ class TestPlaceBet:
                 user.id, game.id, BetType.MONEYLINE, BetSelection.HOME, Decimal("100")
             )
 
-    def test_bet_on_past_game(self, db_session, user, game):
+    def test_bet_on_past_game(self, db_session: Session, user: User, game: Game):
         game.commence_time = datetime.now() - timedelta(hours=1)
         db_session.commit()
 
@@ -119,7 +123,7 @@ class TestPlaceBet:
                 user.id, game.id, BetType.MONEYLINE, BetSelection.HOME, Decimal("100")
             )
 
-    def test_odds_not_available(self, db_session, user, game):
+    def test_odds_not_available(self, db_session: Session, user: User, game: Game):
         game.home_moneyline = None
         db_session.commit()
 
@@ -132,14 +136,14 @@ class TestPlaceBet:
 
 
 class TestGetUserBalance:
-    def test_get_balance(self, db_session, user):
+    def test_get_balance(self, db_session: Session, user: User):
         service = BettingService(db_session)
         balance = service.get_user_balance(user.id)
         assert balance == Decimal("1000.00")
 
 
 class TestGetBets:
-    def test_get_pending_bets(self, db_session, user, game):
+    def test_get_pending_bets(self, db_session: Session, user: User, game: Game):
         service = BettingService(db_session)
 
         service.place_bet(
@@ -152,7 +156,7 @@ class TestGetBets:
         pending_bets = service.get_pending_bets(user.id)
         assert len(pending_bets) == 2
 
-    def test_get_bet_history(self, db_session, user, game):
+    def test_get_bet_history(self, db_session: Session, user: User, game: Game):
         service = BettingService(db_session)
 
         service.place_bet(

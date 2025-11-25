@@ -5,14 +5,14 @@ from src.repositories import GameRepository
 from src.the_odds_api.client import TheOddsApiClient
 
 
-class GameUpdateService:
+class GameScoringService:
     def __init__(self, session: Session, api_client: TheOddsApiClient = None):
         self.session = session
         self.game_repo = GameRepository(session)
         self.api_client = api_client or TheOddsApiClient()
 
     def update_completed_games(self, days_from: int = 1) -> List[Game]:
-        pending_games = self.game_repo.find_in_progress_games()
+        pending_games = self.game_repo.find_unfinished_games()
 
         if not pending_games:
             return []

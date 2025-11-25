@@ -17,11 +17,11 @@ class GameRepository:
     def find_by_status(self, status: GameStatus) -> List[Game]:
         return self.session.query(Game).filter_by(status=status).all()
 
-    def find_games_with_pending_bets(self) -> List[Game]:
+    def find_games_with_pending_bets(self, status: GameStatus) -> List[Game]:
         return (
             self.session.query(Game)
             .filter(
-                Game.status != GameStatus.COMPLETED,
+                Game.status == status,
                 exists().where(
                     (Bet.game_id == Game.id) & (Bet.status == BetStatus.PENDING)
                 )
@@ -29,10 +29,10 @@ class GameRepository:
             .all()
         )
 
-    def find_in_progress_games(self) -> List[Game]:
+    def find_unfinished_games(self) -> List[Game]:
         return (
             self.session.query(Game)
-            .filter(Game.status == GameStatus.IN_PROGRESS)
+            .filter(Game.status != GameStatus.COMPLETED)
             .all()
         )
 

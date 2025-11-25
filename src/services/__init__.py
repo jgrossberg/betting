@@ -1,4 +1,3 @@
-"""Services package for business logic."""
 from .odds_calculator import (
     american_to_decimal_odds,
     calculate_payout,
@@ -13,7 +12,7 @@ from .betting_service import (
     InvalidBetError,
 )
 from .game_sync_service import GameSyncService
-from .game_update_service import GameUpdateService
+from .game_update_service import GameScoringService
 from .bet_settlement_service import BetSettlementService
 
 __all__ = [
@@ -27,6 +26,6 @@ __all__ = [
     'InsufficientBalanceError',
     'InvalidBetError',
     'GameSyncService',
-    'GameUpdateService',
+    'GameScoringService',
     'BetSettlementService',
 ]
