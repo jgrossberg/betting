@@ -1,7 +1,7 @@
 from decimal import Decimal
 import pytest
-from src.models import BetType, BetSelection, BetStatus
-from src.services.bet_settlement import (
+from betting.models import BetType, BetSelection, BetStatus
+from betting.services.bet_settlement import (
     determine_moneyline_outcome,
     determine_spread_outcome,
     determine_over_under_outcome,

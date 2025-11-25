@@ -2,9 +2,9 @@ from datetime import datetime
 from typing import List, Dict, Any
 from decimal import Decimal
 from sqlalchemy.orm import Session
-from src.models import Bet, BetStatus, BetType, Game, User
+from betting.models import Bet, BetStatus, BetType, Game, User
 from .bet_settlement import settle_bet
-from src.repositories import BetRepository, UserRepository
+from betting.repositories import BetRepository, UserRepository
 
 
 class BetSettlementService:

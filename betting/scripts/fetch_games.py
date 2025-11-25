@@ -1,8 +1,8 @@
 """Script to fetch games from The Odds API and populate the database."""
 
-from src.database import get_database
-from src.services.game_sync_service import GameSyncService
-from src.config import config
+from betting.database import get_database
+from betting.services.game_sync_service import GameSyncService
+from betting.config import config
 
 
 def main():

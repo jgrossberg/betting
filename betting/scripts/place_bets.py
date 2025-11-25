@@ -1,11 +1,11 @@
 """Interactive CLI for placing bets on games."""
 
 from decimal import Decimal
-from src.database import get_database
-from src.config import config
-from src.models import User, Game, GameStatus, BetType, BetSelection
-from src.services import BettingService, InsufficientBalanceError, InvalidBetError
-from src.repositories import UserRepository, GameRepository
+from betting.database import get_database
+from betting.config import config
+from betting.models import User, Game, GameStatus, BetType, BetSelection
+from betting.services import BettingService, InsufficientBalanceError, InvalidBetError
+from betting.repositories import UserRepository, GameRepository
 
 
 def display_game(game: Game, index: int):

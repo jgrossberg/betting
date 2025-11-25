@@ -1,6 +1,6 @@
 from decimal import Decimal
 import pytest
-from src.services.odds_calculator import (
+from betting.services.odds_calculator import (
     american_to_decimal_odds,
     calculate_payout,
     calculate_winnings,

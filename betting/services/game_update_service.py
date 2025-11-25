@@ -1,8 +1,8 @@
 from typing import List, Dict, Any
 from sqlalchemy.orm import Session
-from src.models import Game, GameStatus
-from src.repositories import GameRepository
-from src.the_odds_api.client import TheOddsApiClient
+from betting.models import Game, GameStatus
+from betting.repositories import GameRepository
+from betting.the_odds_api.client import TheOddsApiClient
 
 
 class GameScoringService:

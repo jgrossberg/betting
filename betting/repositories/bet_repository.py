@@ -1,6 +1,6 @@
 from typing import List
 from sqlalchemy.orm import Session
-from src.models import Bet, BetStatus
+from betting.models import Bet, BetStatus
 
 
 class BetRepository:

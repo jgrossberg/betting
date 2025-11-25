@@ -1,7 +1,7 @@
 from datetime import datetime
 from decimal import Decimal
 from typing import Dict, Any, Optional
-from src.models import GameStatus
+from betting.models import GameStatus
 
 
 class OddsParser:

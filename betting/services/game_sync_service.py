@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
-from src.models import Game
-from src.the_odds_api import TheOddsApiClient
-from src.repositories import GameRepository
+from betting.models import Game
+from betting.the_odds_api import TheOddsApiClient
+from betting.repositories import GameRepository
 
 
 class GameSyncService:

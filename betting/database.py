@@ -3,7 +3,7 @@ from sqlalchemy.orm import sessionmaker, Session
 from contextlib import contextmanager
 from typing import Generator
 
-from src.models.base import Base
+from betting.models.base import Base
 
 
 class Database:

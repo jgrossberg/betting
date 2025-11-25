@@ -5,11 +5,11 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
 
-from src.models.base import Base
-from src.models.bet import BetSelection, BetType
-from src.models.game import Game, GameStatus
-from src.models.user import User
-from src.services import BettingService, InsufficientBalanceError, InvalidBetError
+from betting.models.base import Base
+from betting.models.bet import BetSelection, BetStatus, BetType
+from betting.models.game import Game, GameStatus
+from betting.models.user import User
+from betting.services import BettingService, InsufficientBalanceError, InvalidBetError
 
 
 @pytest.fixture

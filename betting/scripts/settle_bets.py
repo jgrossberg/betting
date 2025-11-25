@@ -1,11 +1,11 @@
 import argparse
 
-from src.database import get_database
-from src.config import config
-from src.models.game import GameStatus
-from src.repositories.game_repository import GameRepository
-from src.services import BetSettlementService
-from src.models import BetStatus
+from betting.database import get_database
+from betting.config import config
+from betting.models.game import GameStatus
+from betting.repositories.game_repository import GameRepository
+from betting.services import BetSettlementService
+from betting.models import BetStatus
 
 
 def main():

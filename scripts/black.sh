@@ -6,4 +6,4 @@ if [[ -n "${CI}" ]]; then
   FLAGS="--check"
 fi
 
-black "$@" ${FLAGS} src tests
+black "$@" ${FLAGS} betting tests

@@ -1,6 +1,6 @@
 from typing import List, Dict, Any
 import requests
-from src.config import config
+from betting.config import config
 from .parser import OddsParser
 
 

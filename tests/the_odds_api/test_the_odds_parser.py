@@ -1,8 +1,8 @@
 from decimal import Decimal
 from datetime import datetime
 import pytest
-from src.the_odds_api.parser import OddsParser
-from src.models import GameStatus
+from betting.the_odds_api.parser import OddsParser
+from betting.models import GameStatus
 
 
 def test_parse_complete_game():

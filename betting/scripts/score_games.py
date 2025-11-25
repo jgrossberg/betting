@@ -1,8 +1,8 @@
 import argparse
-from src.database import get_database
-from src.config import config
-from src.services import GameScoringService, BetSettlementService
-from src.models import BetStatus
+from betting.database import get_database
+from betting.config import config
+from betting.services import GameScoringService, BetSettlementService
+from betting.models import BetStatus
 
 
 def main():

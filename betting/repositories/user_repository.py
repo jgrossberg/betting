@@ -1,6 +1,6 @@
 from typing import Optional
 from sqlalchemy.orm import Session
-from src.models import User
+from betting.models import User
 
 
 class UserRepository:

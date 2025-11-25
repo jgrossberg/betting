@@ -3,7 +3,7 @@ import pytest
 from unittest.mock import Mock
 from pytest_mock import MockFixture
 import requests
-from src.the_odds_api.client import TheOddsApiClient, OddsAPIError
+from betting.the_odds_api.client import TheOddsApiClient, OddsAPIError
 
 
 @pytest.fixture
@@ -37,7 +37,7 @@ def test_get_nba_games_success(mocker: MockFixture, mock_api_response):
     mock_response.json.return_value = mock_api_response
     mock_response.raise_for_status = Mock()
     mock_get = mocker.patch(
-        "src.the_odds_api.client.requests.get", return_value=mock_response
+        "betting.the_odds_api.client.requests.get", return_value=mock_response
     )
 
     client = TheOddsApiClient(api_key="test_key")
@@ -59,7 +59,7 @@ def test_get_nba_games_success(mocker: MockFixture, mock_api_response):
 
 def test_get_nba_games_api_error(mocker: MockFixture):
     mocker.patch(
-        "src.the_odds_api.client.requests.get",
+        "betting.the_odds_api.client.requests.get",
         side_effect=requests.RequestException("API Down"),
     )
 
@@ -70,7 +70,7 @@ def test_get_nba_games_api_error(mocker: MockFixture):
 
 
 def test_client_missing_api_key(mocker: MockFixture):
-    mock_config = mocker.patch("src.the_odds_api.client.config")
+    mock_config = mocker.patch("betting.the_odds_api.client.config")
     mock_config.ODDS_API_KEY = ""
     mock_config.ODDS_API_BASE_URL = "https://api.the-odds-api.com/v4"
 
@@ -81,7 +81,7 @@ def test_client_missing_api_key(mocker: MockFixture):
 def test_check_usage(mocker: MockFixture):
     mock_response = Mock()
     mock_response.headers = {"x-requests-remaining": "450", "x-requests-used": "50"}
-    mocker.patch("src.the_odds_api.client.requests.get", return_value=mock_response)
+    mocker.patch("betting.the_odds_api.client.requests.get", return_value=mock_response)
 
     client = TheOddsApiClient(api_key="test_key")
     usage = client.check_usage()

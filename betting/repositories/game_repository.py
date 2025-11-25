@@ -1,7 +1,7 @@
 from typing import List, Optional
 from sqlalchemy.orm import Session
 from sqlalchemy import exists
-from src.models import Game, GameStatus, Bet, BetStatus
+from betting.models import Game, GameStatus, Bet, BetStatus
 
 
 class GameRepository:

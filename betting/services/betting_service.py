@@ -7,9 +7,9 @@ from uuid import UUID
 
 from sqlalchemy.orm import Session
 
-from src.models import User, Game, Bet, BetType, BetSelection, BetStatus, GameStatus
-from src.services.odds_calculator import calculate_payout
-from src.repositories import UserRepository, GameRepository, BetRepository
+from betting.models import User, Game, Bet, BetType, BetSelection, BetStatus, GameStatus
+from betting.services.odds_calculator import calculate_payout
+from betting.repositories import UserRepository, GameRepository, BetRepository
 
 
 class BettingError(Exception):

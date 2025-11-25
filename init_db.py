@@ -1,8 +1,8 @@
 """Initialize the database and create default user."""
 from decimal import Decimal
-from src.database import get_database
-from src.models import User
-from src.config import config
+from betting.database import get_database
+from betting.models import User
+from betting.config import config
 
 
 def init_database():

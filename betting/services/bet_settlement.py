@@ -1,7 +1,7 @@
 """Logic for determining bet outcomes based on game results."""
 
 from decimal import Decimal
-from src.models import BetType, BetSelection, BetStatus
+from betting.models import BetType, BetSelection, BetStatus
 
 
 def determine_moneyline_outcome(
