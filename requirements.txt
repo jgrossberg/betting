@@ -4,6 +4,10 @@ sqlalchemy>=2.0.0
 # HTTP requests for API
 requests>=2.31.0
 
+# Web framework
+fastapi>=0.109.0
+uvicorn>=0.27.0
+
 # CLI
 click>=8.1.0
 
@@ -16,6 +20,7 @@ python-dotenv>=1.0.0
 # Testing
 pytest>=7.4.0
 pytest-mock>=3.12.0
+httpx>=0.26.0
 
 # Dev tools
 black>=24.0.0

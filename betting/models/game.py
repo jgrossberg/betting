@@ -1,18 +1,13 @@
 from datetime import datetime
 from decimal import Decimal
-from enum import Enum as PyEnum
 from uuid import UUID, uuid4
 from sqlalchemy import String, DateTime, Numeric, Integer, Enum, Uuid
 from sqlalchemy.orm import Mapped, mapped_column
 from typing import Optional
 
+from betting.models.enums import GameStatus
+
 from .base import Base
-
-
-class GameStatus(PyEnum):
-    UPCOMING = "upcoming"
-    IN_PROGRESS = "in_progress"
-    COMPLETED = "completed"
 
 
 class Game(Base):

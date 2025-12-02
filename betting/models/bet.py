@@ -1,32 +1,13 @@
 from datetime import datetime
 from decimal import Decimal
-from enum import Enum as PyEnum
 from uuid import UUID, uuid4
-from sqlalchemy import String, DateTime, Numeric, Enum, ForeignKey, Uuid
+from sqlalchemy import DateTime, Numeric, Enum, ForeignKey, Uuid
 from sqlalchemy.orm import Mapped, mapped_column
 from typing import Optional
 
+from betting.models.enums import BetSelection, BetStatus, BetType
+
 from .base import Base
-
-
-class BetType(PyEnum):
-    MONEYLINE = "moneyline"
-    SPREAD = "spread"
-    OVER_UNDER = "over_under"
-
-
-class BetSelection(PyEnum):
-    HOME = "home"
-    AWAY = "away"
-    OVER = "over"
-    UNDER = "under"
-
-
-class BetStatus(PyEnum):
-    PENDING = "pending"
-    WON = "won"
-    LOST = "lost"
-    PUSH = "push"
 
 
 class Bet(Base):
