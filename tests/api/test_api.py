@@ -239,3 +239,32 @@ def test_balance_decreases_after_bet(client, user, game):
     response = client.get(f"/users/{user.id}/balance")
     assert response.status_code == 200
     assert response.json()["balance"] == "900.00"
+
+
+def test_create_user(client):
+    response = client.post(
+        "/users",
+        json={"username": "newuser"},
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert data["username"] == "newuser"
+    assert data["balance"] == "1000.00"
+    assert "id" in data
+
+
+def test_create_user_custom_balance(client):
+    response = client.post(
+        "/users",
+        json={"username": "richuser", "balance": "5000.00"},
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert data["balance"] == "5000.00"
+
+
+def test_create_user_duplicate_username(client):
+    client.post("/users", json={"username": "dupeuser"})
+    response = client.post("/users", json={"username": "dupeuser"})
+    assert response.status_code == 400
+    assert "already exists" in response.json()["detail"]

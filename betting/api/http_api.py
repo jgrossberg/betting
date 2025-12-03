@@ -14,6 +14,8 @@ from .schemas import (
     PlaceBetRequest,
     BetResponse,
     BalanceResponse,
+    CreateUserRequest,
+    UserResponse,
 )
 
 app = FastAPI(
@@ -119,3 +121,18 @@ def get_user_balance(
         raise HTTPException(status_code=404, detail="User not found")
 
     return BalanceResponse(user_id=user.id, balance=user.balance)
+
+
+@app.post("/users", response_model=UserResponse)
+def create_user(
+    request: CreateUserRequest,
+    session: Session = Depends(get_session),
+):
+    user_repo = UserRepository(session)
+
+    existing = user_repo.find_by_username(request.username)
+    if existing:
+        raise HTTPException(status_code=400, detail="Username already exists")
+
+    user = user_repo.create(username=request.username, balance=request.balance)
+    return user

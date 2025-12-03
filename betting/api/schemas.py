@@ -55,5 +55,18 @@ class BalanceResponse(BaseModel):
     balance: Decimal
 
 
+class CreateUserRequest(BaseModel):
+    username: str
+    balance: Decimal = Decimal("1000.00")
+
+
+class UserResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID
+    username: str
+    balance: Decimal
+
+
 class ErrorResponse(BaseModel):
     detail: str
