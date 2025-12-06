@@ -140,7 +140,6 @@ def create_user(
     return user
 
 
-
 def verify_admin_key(x_admin_key: str = Header()):
     if not config.ADMIN_API_KEY:
         raise HTTPException(status_code=500, detail="ADMIN_API_KEY not configured")

@@ -1,5 +1,6 @@
 """Interactive CLI for placing bets on games."""
 
+import argparse
 from decimal import Decimal
 from betting.database import get_database
 from betting.config import config
@@ -97,6 +98,10 @@ def prompt_for_bet(game: Game, user_id, service: BettingService):
 
 
 def main():
+    parser = argparse.ArgumentParser(description="Place bets on upcoming games")
+    parser.add_argument("username", help="Username to place bets for")
+    args = parser.parse_args()
+
     print("=" * 60)
     print("NBA BETTING - PLACE BETS")
     print("=" * 60)
@@ -108,12 +113,13 @@ def main():
         user_repo = UserRepository(session)
         game_repo = GameRepository(session)
 
-        user = user_repo.find_by_username("default")
+        user = user_repo.find_by_username(args.username)
         if not user:
-            print("Error: Default user not found. Run init_db.py first.")
+            print(f"Error: User '{args.username}' not found.")
             return
 
-        print(f"\nCurrent balance: ${user.balance}")
+        print(f"\nUser: {user.username}")
+        print(f"Current balance: ${user.balance}")
 
         games = game_repo.find_by_status(GameStatus.UPCOMING)
 

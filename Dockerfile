@@ -1,16 +1,17 @@
 FROM python:3.12-slim
 
+# Create non-root user first
+RUN useradd --create-home appuser
+
 WORKDIR /app
 
 # Install dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy application code
-COPY betting/ betting/
+# Copy application code and set ownership
+COPY --chown=appuser:appuser betting/ betting/
 
-# Create non-root user
-RUN useradd --create-home appuser
 USER appuser
 
 # Cloud Run sets PORT env var

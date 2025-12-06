@@ -272,7 +272,6 @@ def test_create_user_duplicate_username(client):
     assert "already exists" in response.json()["detail"]
 
 
-
 def test_admin_fetch_games_requires_auth(client):
     response = client.post("/admin/fetch-games")
     assert response.status_code == 422
