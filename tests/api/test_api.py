@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 from decimal import Decimal
+from unittest.mock import patch, MagicMock
 from uuid import uuid4
 import pytest
 from fastapi.testclient import TestClient
@@ -11,6 +12,7 @@ from betting.api.http_api import app, get_session
 from betting.models.base import Base
 from betting.models.game import Game, GameStatus
 from betting.models.user import User
+from betting.models.enums import BetStatus
 
 
 @pytest.fixture
@@ -268,3 +270,136 @@ def test_create_user_duplicate_username(client):
     response = client.post("/users", json={"username": "dupeuser"})
     assert response.status_code == 400
     assert "already exists" in response.json()["detail"]
+
+
+
+def test_admin_fetch_games_requires_auth(client):
+    response = client.post("/admin/fetch-games")
+    assert response.status_code == 422
+
+
+def test_admin_fetch_games_rejects_bad_key(client):
+    response = client.post(
+        "/admin/fetch-games",
+        headers={"X-Admin-Key": "wrong-key"},
+    )
+    assert response.status_code == 401
+    assert "Invalid admin key" in response.json()["detail"]
+
+
+def test_admin_score_games_requires_auth(client):
+    response = client.post("/admin/score-games")
+    assert response.status_code == 422
+
+
+def test_admin_score_games_rejects_bad_key(client):
+    response = client.post(
+        "/admin/score-games",
+        headers={"X-Admin-Key": "wrong-key"},
+    )
+    assert response.status_code == 401
+
+
+def test_admin_settle_bets_requires_auth(client):
+    response = client.post("/admin/settle-bets")
+    assert response.status_code == 422
+
+
+def test_admin_settle_bets_rejects_bad_key(client):
+    response = client.post(
+        "/admin/settle-bets",
+        headers={"X-Admin-Key": "wrong-key"},
+    )
+    assert response.status_code == 401
+
+
+@patch("betting.api.http_api.config")
+@patch("betting.api.http_api.GameSyncService")
+def test_admin_fetch_games_success(mock_sync_service, mock_config, client):
+    mock_config.ADMIN_API_KEY = "test-key"
+    mock_service_instance = MagicMock()
+    mock_service_instance.sync_games.return_value = {
+        "created": 5,
+        "updated": 2,
+        "total": 7,
+    }
+    mock_sync_service.return_value = mock_service_instance
+
+    response = client.post(
+        "/admin/fetch-games",
+        headers={"X-Admin-Key": "test-key"},
+    )
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["status"] == "success"
+    assert data["created"] == 5
+    assert data["updated"] == 2
+    assert data["total"] == 7
+    mock_service_instance.sync_games.assert_called_once()
+
+
+@patch("betting.api.http_api.config")
+@patch("betting.api.http_api.GameScoringService")
+def test_admin_score_games_success(mock_scoring_service, mock_config, client):
+    mock_config.ADMIN_API_KEY = "test-key"
+    mock_service_instance = MagicMock()
+    mock_service_instance.update_completed_games.return_value = [
+        MagicMock(),
+        MagicMock(),
+        MagicMock(),
+    ]
+    mock_scoring_service.return_value = mock_service_instance
+
+    response = client.post(
+        "/admin/score-games",
+        headers={"X-Admin-Key": "test-key"},
+    )
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["status"] == "success"
+    assert data["games_updated"] == 3
+    mock_service_instance.update_completed_games.assert_called_once_with(days_from=2)
+
+
+@patch("betting.api.http_api.config")
+@patch("betting.api.http_api.BetSettlementService")
+@patch("betting.api.http_api.GameRepository")
+def test_admin_settle_bets_success(
+    mock_game_repo, mock_settlement_service, mock_config, client
+):
+    mock_config.ADMIN_API_KEY = "test-key"
+
+    mock_repo_instance = MagicMock()
+    mock_repo_instance.find_games_with_pending_bets.return_value = [MagicMock()]
+    mock_game_repo.return_value = mock_repo_instance
+
+    mock_won_bet = MagicMock()
+    mock_won_bet.status = BetStatus.WON
+    mock_lost_bet = MagicMock()
+    mock_lost_bet.status = BetStatus.LOST
+    mock_push_bet = MagicMock()
+    mock_push_bet.status = BetStatus.PUSH
+
+    mock_service_instance = MagicMock()
+    mock_service_instance.settle_bets_for_games.return_value = [
+        mock_won_bet,
+        mock_won_bet,
+        mock_lost_bet,
+        mock_push_bet,
+    ]
+    mock_settlement_service.return_value = mock_service_instance
+
+    response = client.post(
+        "/admin/settle-bets",
+        headers={"X-Admin-Key": "test-key"},
+    )
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["status"] == "success"
+    assert data["bets_settled"] == 4
+    assert data["won"] == 2
+    assert data["lost"] == 1
+    assert data["push"] == 1

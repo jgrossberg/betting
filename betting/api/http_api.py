@@ -1,13 +1,15 @@
 from uuid import UUID
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, HTTPException, Depends, Header
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
 from betting.database import get_database
 from betting.config import config
-from betting.models.enums import BetSelection, BetType, GameStatus
+from betting.models.enums import BetSelection, BetType, GameStatus, BetStatus
 from betting.repositories import GameRepository, UserRepository
 from betting.services import BettingService, InsufficientBalanceError, InvalidBetError
+from betting.services.game_sync_service import GameSyncService
+from betting.services import GameScoringService, BetSettlementService
 
 from .schemas import (
     GameResponse,
@@ -136,3 +138,65 @@ def create_user(
 
     user = user_repo.create(username=request.username, balance=request.balance)
     return user
+
+
+
+def verify_admin_key(x_admin_key: str = Header()):
+    if not config.ADMIN_API_KEY:
+        raise HTTPException(status_code=500, detail="ADMIN_API_KEY not configured")
+    if x_admin_key != config.ADMIN_API_KEY:
+        raise HTTPException(status_code=401, detail="Invalid admin key")
+
+
+@app.post("/admin/fetch-games")
+def admin_fetch_games(
+    session: Session = Depends(get_session),
+    _: None = Depends(verify_admin_key),
+):
+    sync_service = GameSyncService(session)
+    result = sync_service.sync_games()
+
+    return {
+        "status": "success",
+        "created": result["created"],
+        "updated": result["updated"],
+        "total": result["total"],
+    }
+
+
+@app.post("/admin/score-games")
+def admin_score_games(
+    session: Session = Depends(get_session),
+    _: None = Depends(verify_admin_key),
+):
+    scoring_service = GameScoringService(session)
+    updated_games = scoring_service.update_completed_games(days_from=2)
+
+    return {
+        "status": "success",
+        "games_updated": len(updated_games),
+    }
+
+
+@app.post("/admin/settle-bets")
+def admin_settle_bets(
+    session: Session = Depends(get_session),
+    _: None = Depends(verify_admin_key),
+):
+    game_repo = GameRepository(session)
+    finished_games = game_repo.find_games_with_pending_bets(GameStatus.COMPLETED)
+
+    settlement_service = BetSettlementService(session)
+    settled_bets = settlement_service.settle_bets_for_games(finished_games)
+
+    won_count = sum(1 for bet in settled_bets if bet.status == BetStatus.WON)
+    lost_count = sum(1 for bet in settled_bets if bet.status == BetStatus.LOST)
+    push_count = sum(1 for bet in settled_bets if bet.status == BetStatus.PUSH)
+
+    return {
+        "status": "success",
+        "bets_settled": len(settled_bets),
+        "won": won_count,
+        "lost": lost_count,
+        "push": push_count,
+    }

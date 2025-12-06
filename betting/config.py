@@ -13,6 +13,8 @@ class Config:
     ODDS_API_BASE_URL = "https://api.the-odds-api.com/v4"
     ODDS_API_SPORT = "basketball_nba"
 
+    ADMIN_API_KEY = os.getenv("ADMIN_API_KEY", "")
+
     DEFAULT_USER_BALANCE = 1000.00
 
     @classmethod

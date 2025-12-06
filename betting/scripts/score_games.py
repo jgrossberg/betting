@@ -21,7 +21,7 @@ def main():
         try:
             print("\nUpdating completed games scores")
             update_service = GameScoringService(session)
-            updated_games = update_service.update_completed_games(days_from=1)
+            updated_games = update_service.update_completed_games(days_from=2)
 
             if not updated_games:
                 print("No games with pending bets were updated.")
