@@ -1,102 +1,95 @@
-# NBA Betting CLI
+# FreeBet
 
-A Python-based command-line application for simulating NBA betting. Fetches real-time odds and scores from The Odds API, manages bets, and settles winnings.
+A free sports betting platform for testing strategies and models against real odds. No money, no risk.
+
+**Live at:** https://betting-bice.vercel.app
 
 ## Features
 
-- Fetch live NBA odds (moneyline, spread, over/under)
-- Interactive CLI for placing bets
-- Automatic bet settlement based on game results
-- Track user balance and betting history
-- Dry-run mode to preview settlements before committing
+- Real betting lines from The Odds API (moneyline, spread, over/under)
+- Place bets and track your balance
+- Automatic bet settlement when games complete
+- REST API for programmatic betting (build your own models!)
 
-## Prerequisites
+## Architecture
 
-- Python 3.10+
-- The Odds API key (free tier available at https://the-odds-api.com/)
+- **Frontend:** React + Vite, deployed on Vercel
+- **Backend:** FastAPI on Google Cloud Run
+- **Database:** PostgreSQL on Supabase
+- **Scheduled Jobs:** Cloud Scheduler triggers game fetching and scoring
 
-## Installation
+## Local Development
 
-1. Clone the repository:
+### Backend
+
 ```bash
-git clone <repository-url>
-cd betting
-```
-
-2. Install dependencies:
-```bash
+# Install dependencies
 pip install -r requirements.txt
+
+# Set up .env
+cp .env.example .env
+# Add your ODDS_API_KEY, DATABASE_URL, ADMIN_API_KEY
+
+# Run migrations
+alembic upgrade head
+
+# Start the API
+uvicorn betting.api.http_api:app --reload --port 9000
 ```
 
-3. Set up environment variables:
-
-Create a `.env` file in the project root:
-```
-ODDS_API_KEY=your_api_key_here
-ODDS_API_BASE_URL=https://api.the-odds-api.com/v4
-ODDS_API_SPORT=basketball_nba
-DATABASE_URL=sqlite:///betting.db
-```
-
-4. Initialize the database:
-```bash
-python init_db.py
-```
-
-This creates the SQLite database and sets up a default user with $1000 balance.
-
-## Usage
-
-### 1. Fetch Games
-
-Fetch upcoming NBA games with odds from The Odds API:
+### Frontend
 
 ```bash
-python fetch_games.py
+cd frontend
+npm install
+npm run dev
 ```
 
-This populates the database with games, odds, and betting lines.
-
-### 2. Place Bets
-
-Launch the interactive betting CLI:
+### CLI Scripts
 
 ```bash
-python place_bets.py
+# Fetch games from The Odds API
+python -m betting.scripts.fetch_games
+
+# Place bets interactively
+python -m betting.scripts.place_bets <username>
+
+# Score completed games
+python -m betting.scripts.score_games
+
+# Settle bets
+python -m betting.scripts.settle_bets
 ```
 
-The CLI will:
-- Display each upcoming game with available odds
-- Prompt you to select bet type (moneyline, spread, over/under)
-- Let you choose your selection and stake amount
-- Deduct your stake from your balance immediately
+## API Endpoints
 
-### 3. Settle Bets
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/health` | Health check |
+| GET | `/games` | List games with odds |
+| POST | `/users` | Create a user |
+| GET | `/users/{id}/balance` | Get user balance |
+| GET | `/users/{id}/bets` | Get user's bets |
+| POST | `/bets?user_id={id}` | Place a bet |
 
-After games complete, settle your pending bets:
+Admin endpoints (require `X-Admin-Key` header):
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/admin/fetch-games` | Fetch games from Odds API |
+| POST | `/admin/score-games` | Update scores for completed games |
+| POST | `/admin/settle-bets` | Settle pending bets |
 
-**Preview settlements (dry-run):**
+## Deployment
+
 ```bash
-python settle_bets.py --dry-run
+# Deploy backend to Cloud Run
+./scripts/deploy.sh
+
+# Frontend auto-deploys on push via Vercel
 ```
 
-This shows you which bets will win/lose/push without making any changes.
+## Tests
 
-**Actually settle bets:**
-```bash
-python settle_bets.py
-```
-
-This will:
-- Check for games that are IN_PROGRESS
-- Fetch final scores from The Odds API
-- Mark games as COMPLETED
-- Settle all pending bets and update user balances
-
-## Development
-
-Run tests:
 ```bash
 pytest
 ```
-
