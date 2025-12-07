@@ -1,11 +1,12 @@
 from datetime import datetime
 from decimal import Decimal
 from uuid import UUID, uuid4
-from sqlalchemy import DateTime, Numeric, Enum, ForeignKey, Uuid
+from sqlalchemy import Numeric, Enum, ForeignKey, Uuid
 from sqlalchemy.orm import Mapped, mapped_column
 from typing import Optional
 
 from betting.models.enums import BetSelection, BetStatus, BetType
+from .types import TZDateTime
 
 from .base import Base
 
@@ -30,7 +31,7 @@ class Bet(Base):
     status: Mapped[BetStatus] = mapped_column(
         Enum(BetStatus), nullable=False, default=BetStatus.PENDING
     )
-    settled_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    settled_at: Mapped[Optional[datetime]] = mapped_column(TZDateTime, nullable=True)
 
     def __repr__(self):
         return f"<Bet(id={self.id}, type={self.bet_type.value}, stake={self.stake}, status={self.status.value})>"

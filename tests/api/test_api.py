@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from decimal import Decimal
 from unittest.mock import patch, MagicMock
 from uuid import uuid4
@@ -68,7 +68,7 @@ def game(db_session):
         external_id="test_game_1",
         home_team="Lakers",
         away_team="Warriors",
-        commence_time=datetime.now() + timedelta(hours=2),
+        commence_time=datetime.now(timezone.utc) + timedelta(hours=2),
         home_moneyline=Decimal("-110"),
         away_moneyline=Decimal("120"),
         home_spread=Decimal("-5.5"),
@@ -97,27 +97,72 @@ def test_list_games_empty(client):
     assert response.json() == []
 
 
-def test_list_games_returns_upcoming(client, game):
+def test_list_games_returns_all_by_default(client, game, db_session):
+    """Without status filter, returns all games regardless of status."""
+    # Create a completed game
+    completed_game = Game(
+        external_id="completed_game_1",
+        home_team="Celtics",
+        away_team="Heat",
+        commence_time=datetime.now(timezone.utc) - timedelta(hours=24),
+        home_moneyline=Decimal("-110"),
+        away_moneyline=Decimal("100"),
+        home_spread=Decimal("-3.5"),
+        home_spread_odds=Decimal("-110"),
+        away_spread=Decimal("3.5"),
+        away_spread_odds=Decimal("-110"),
+        total_points=Decimal("210.5"),
+        over_odds=Decimal("-110"),
+        under_odds=Decimal("-110"),
+        status=GameStatus.COMPLETED,
+    )
+    db_session.add(completed_game)
+    db_session.commit()
+
     response = client.get("/games")
     assert response.status_code == 200
     games = response.json()
-    assert len(games) == 1
-    assert games[0]["home_team"] == "Lakers"
-    assert games[0]["away_team"] == "Warriors"
-    assert games[0]["status"] == "upcoming"
+    assert len(games) == 2  # Both upcoming and completed
 
 
-def test_list_games_filter_by_status(client, game, db_session):
-    game.status = GameStatus.COMPLETED
+def test_list_games_filter_by_status_upcoming(client, game, db_session):
+    """With status=upcoming, returns only upcoming games."""
+    completed_game = Game(
+        external_id="completed_game_2",
+        home_team="Celtics",
+        away_team="Heat",
+        commence_time=datetime.now(timezone.utc) - timedelta(hours=24),
+        home_moneyline=Decimal("-110"),
+        away_moneyline=Decimal("100"),
+        home_spread=Decimal("-3.5"),
+        home_spread_odds=Decimal("-110"),
+        away_spread=Decimal("3.5"),
+        away_spread_odds=Decimal("-110"),
+        total_points=Decimal("210.5"),
+        over_odds=Decimal("-110"),
+        under_odds=Decimal("-110"),
+        status=GameStatus.COMPLETED,
+    )
+    db_session.add(completed_game)
     db_session.commit()
 
     response = client.get("/games?status=upcoming")
     assert response.status_code == 200
-    assert response.json() == []
+    games = response.json()
+    assert len(games) == 1
+    assert games[0]["status"] == "upcoming"
+
+
+def test_list_games_filter_by_status_completed(client, game, db_session):
+    """With status=completed, returns only completed games."""
+    game.status = GameStatus.COMPLETED
+    db_session.commit()
 
     response = client.get("/games?status=completed")
     assert response.status_code == 200
-    assert len(response.json()) == 1
+    games = response.json()
+    assert len(games) == 1
+    assert games[0]["status"] == "completed"
 
 
 def test_place_bet_success(client, user, game):

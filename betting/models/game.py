@@ -1,11 +1,12 @@
 from datetime import datetime
 from decimal import Decimal
 from uuid import UUID, uuid4
-from sqlalchemy import String, DateTime, Numeric, Integer, Enum, Uuid
+from sqlalchemy import String, Numeric, Integer, Enum, Uuid
 from sqlalchemy.orm import Mapped, mapped_column
 from typing import Optional
 
 from betting.models.enums import GameStatus
+from .types import TZDateTime
 
 from .base import Base
 
@@ -20,7 +21,7 @@ class Game(Base):
     home_team: Mapped[str] = mapped_column(String(100), nullable=False)
     away_team: Mapped[str] = mapped_column(String(100), nullable=False)
 
-    commence_time: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    commence_time: Mapped[datetime] = mapped_column(TZDateTime, nullable=False)
 
     # Moneyline odds (American format, e.g., +150, -110)
     home_moneyline: Mapped[Optional[Decimal]] = mapped_column(

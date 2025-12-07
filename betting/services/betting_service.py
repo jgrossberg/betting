@@ -85,7 +85,7 @@ class BettingService:
                 "Cannot bet on a game that has already started or completed"
             )
 
-        if game.commence_time <= datetime.now():
+        if game.commence_time <= datetime.now(timezone.utc):
             raise InvalidBetError("Game has already started")
 
         # Get odds for the bet type and selection

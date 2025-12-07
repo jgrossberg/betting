@@ -37,8 +37,7 @@ def game(db_session: Session):
         external_id="test_game_1",
         home_team="Lakers",
         away_team="Warriors",
-        commence_time=datetime.now(timezone.utc).replace(tzinfo=None)
-        + timedelta(hours=2),
+        commence_time=datetime.now(timezone.utc) + timedelta(hours=2),
         home_moneyline=Decimal("-110"),
         away_moneyline=Decimal("120"),
         home_spread=Decimal("-5.5"),
@@ -114,7 +113,7 @@ class TestPlaceBet:
             )
 
     def test_bet_on_past_game(self, db_session: Session, user: User, game: Game):
-        game.commence_time = datetime.now() - timedelta(hours=1)
+        game.commence_time = datetime.now(timezone.utc) - timedelta(hours=1)
         db_session.commit()
 
         service = BettingService(db_session)

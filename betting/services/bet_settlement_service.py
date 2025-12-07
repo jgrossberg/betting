@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import List, Dict, Any
 from decimal import Decimal
 from sqlalchemy.orm import Session
@@ -96,7 +96,7 @@ class BetSettlementService:
 
     def _process_bet_outcome(self, bet: Bet, outcome: BetStatus):
         bet.status = outcome
-        bet.settled_at = datetime.now()
+        bet.settled_at = datetime.now(timezone.utc)
 
         user = self.user_repo.find_by_id(bet.user_id)
 

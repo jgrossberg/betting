@@ -14,6 +14,9 @@ class GameRepository:
     def find_by_external_id(self, external_id: str) -> Optional[Game]:
         return self.session.query(Game).filter_by(external_id=external_id).first()
 
+    def find_all(self) -> List[Game]:
+        return self.session.query(Game).all()
+
     def find_by_status(self, status: GameStatus) -> List[Game]:
         return self.session.query(Game).filter_by(status=status).all()
 

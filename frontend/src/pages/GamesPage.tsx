@@ -74,7 +74,8 @@ function GameCard({ game, onPlaceBet }: { game: Game; onPlaceBet: (game: Game) =
 }
 
 export function GamesPage({ games, onPlaceBet }: GamesPageProps) {
-  const sortedGames = [...games].sort(
+  const upcomingGames = games.filter(g => g.status === 'upcoming');
+  const sortedGames = [...upcomingGames].sort(
     (a, b) => new Date(a.commence_time).getTime() - new Date(b.commence_time).getTime()
   );
 

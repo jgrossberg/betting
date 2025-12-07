@@ -74,10 +74,9 @@ def list_games(
     game_repo = GameRepository(session)
 
     if status:
-        db_status = GameStatus(status.value)
-        games = game_repo.find_by_status(db_status)
+        games = game_repo.find_by_status(status)
     else:
-        games = game_repo.find_by_status(GameStatus.UPCOMING)
+        games = game_repo.find_all()
 
     # Filter out games without complete betting lines
     games = [g for g in games if has_all_lines(g)]

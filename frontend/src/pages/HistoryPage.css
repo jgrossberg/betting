@@ -1,0 +1,151 @@
+.history-page {
+  max-width: 100%;
+}
+
+.stats-bar {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 24px;
+  padding: 16px 20px;
+  background: #2a2a4a;
+  border-radius: 12px;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stat-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.stat-value.positive {
+  color: #4ade80;
+}
+
+.stat-value.negative {
+  color: #ef4444;
+}
+
+.history-table-wrapper {
+  overflow-x: auto;
+  border-radius: 12px;
+  background: #2a2a4a;
+}
+
+.history-table {
+  width: 100%;
+  min-width: 900px;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.history-table th {
+  text-align: left;
+  padding: 12px 16px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #888;
+  border-bottom: 1px solid #3a3a5a;
+  white-space: nowrap;
+}
+
+.history-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #3a3a5a;
+  white-space: nowrap;
+}
+
+.history-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.history-table tbody tr:hover {
+  background: #32325a;
+}
+
+.history-table tbody tr.won {
+  border-left: 3px solid #4ade80;
+}
+
+.history-table tbody tr.lost {
+  border-left: 3px solid #ef4444;
+}
+
+.history-table tbody tr.push {
+  border-left: 3px solid #888;
+}
+
+.game-cell {
+  min-width: 280px;
+}
+
+.type-cell {
+  text-transform: uppercase;
+  font-size: 11px;
+  color: #888;
+}
+
+.pick-cell {
+  text-transform: capitalize;
+}
+
+.odds-cell {
+  font-weight: 600;
+  color: #4ade80;
+}
+
+.stake-cell,
+.payout-cell {
+  font-weight: 600;
+}
+
+.result-cell {
+  font-weight: 700;
+  font-size: 11px;
+}
+
+.result-cell.won {
+  color: #4ade80;
+}
+
+.result-cell.lost {
+  color: #ef4444;
+}
+
+.result-cell.push {
+  color: #888;
+}
+
+@media (max-width: 768px) {
+  .stats-bar {
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .stat {
+    min-width: 80px;
+  }
+
+  .history-table {
+    font-size: 12px;
+  }
+
+  .history-table th,
+  .history-table td {
+    padding: 10px 12px;
+  }
+}
