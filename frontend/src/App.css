@@ -9,54 +9,36 @@ body {
   color: #eee;
 }
 
-.app {
+/* Page styles */
+.page {
   max-width: 600px;
-  margin: 0 auto;
-  padding: 16px;
 }
 
-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-}
-
-header h1 {
-  margin: 0;
+.page-title {
+  margin: 0 0 20px 0;
   font-size: 24px;
+  font-weight: 600;
 }
 
-.user-info {
-  font-size: 18px;
-  color: #4ade80;
-}
-
-.tabs {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 16px;
-}
-
-.tabs button {
-  flex: 1;
-  padding: 12px;
-  border: none;
-  background: #2a2a4a;
+.section-title {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 600;
   color: #888;
-  font-size: 16px;
-  cursor: pointer;
-  border-radius: 8px;
-  transition: all 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-.tabs button.active {
-  background: #4a4a8a;
-  color: #fff;
+.bets-section {
+  margin-bottom: 32px;
 }
 
-.tabs button:hover {
-  background: #3a3a6a;
+.empty-state {
+  text-align: center;
+  color: #888;
+  padding: 48px 24px;
+  background: #2a2a4a;
+  border-radius: 12px;
 }
 
 /* Game Card */
@@ -238,6 +220,7 @@ header h1 {
   align-items: center;
   justify-content: center;
   padding: 16px;
+  z-index: 1000;
 }
 
 .modal {
@@ -326,21 +309,54 @@ header h1 {
   background: #4f46e5;
 }
 
-/* Login */
+/* Login Page */
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.login-card {
+  background: #2a2a4a;
+  border-radius: 16px;
+  padding: 48px;
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.login-card h1 {
+  margin: 0 0 8px 0;
+  font-size: 36px;
+  font-weight: 700;
+}
+
+.login-subtitle {
+  color: #888;
+  margin: 0 0 32px 0;
+}
+
 .login-form {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  margin-top: 32px;
 }
 
 .login-form input {
   padding: 16px;
   border: 1px solid #3a3a5a;
   border-radius: 8px;
-  background: #2a2a4a;
+  background: #1a1a2e;
   color: #fff;
   font-size: 16px;
+  text-align: center;
+}
+
+.login-form input:focus {
+  outline: none;
+  border-color: #6366f1;
 }
 
 .login-form button {
@@ -354,24 +370,33 @@ header h1 {
   cursor: pointer;
 }
 
+.login-form button:hover {
+  background: #4f46e5;
+}
+
 /* Error */
 .error {
   background: #7f1d1d;
   color: #fca5a5;
   padding: 12px;
   border-radius: 8px;
-  margin-bottom: 16px;
+  margin-top: 16px;
 }
 
-/* Games/Bets list */
+.global-error {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #7f1d1d;
+  color: #fca5a5;
+  padding: 12px 24px;
+  border-radius: 8px;
+  z-index: 1000;
+}
+
+/* Lists */
 .games-list,
 .bets-list {
   min-height: 200px;
-}
-
-.games-list > p,
-.bets-list > p {
-  text-align: center;
-  color: #888;
-  padding: 32px;
 }
