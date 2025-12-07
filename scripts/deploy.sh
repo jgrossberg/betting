@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 set -e
 
+# Load .env file
+if [ -f .env ]; then
+  export $(cat .env | grep -v '^#' | xargs)
+fi
+
 gcloud run deploy betting-api \
   --source . \
   --region us-west1 \
