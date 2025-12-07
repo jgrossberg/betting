@@ -4,10 +4,11 @@ import './Layout.css';
 
 interface LayoutProps {
   balance: string | null;
+  username: string;
   onLogout: () => void;
 }
 
-export function Layout({ balance, onLogout }: LayoutProps) {
+export function Layout({ balance, username, onLogout }: LayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
@@ -34,11 +35,18 @@ export function Layout({ balance, onLogout }: LayoutProps) {
           </NavLink>
           <NavLink to="/bets" onClick={() => setSidebarOpen(false)}>
             <span className="nav-icon">&#9741;</span>
-            My Bets
+            Open Bets
+          </NavLink>
+          <NavLink to="/history" onClick={() => setSidebarOpen(false)}>
+            <span className="nav-icon">&#128218;</span>
+            History
           </NavLink>
         </nav>
 
         <div className="sidebar-footer">
+          <div className="user-info">
+            <span className="username">{username}</span>
+          </div>
           <div className="balance">
             <span className="balance-label">Balance</span>
             <span className="balance-amount">${balance || '...'}</span>

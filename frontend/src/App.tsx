@@ -5,9 +5,11 @@ import { api } from './api';
 import { Layout } from './components/Layout';
 import { GamesPage } from './pages/GamesPage';
 import { BetsPage } from './pages/BetsPage';
+import { HistoryPage } from './pages/HistoryPage';
 import './App.css';
 
 const USER_ID = localStorage.getItem('userId') || '';
+const USERNAME = localStorage.getItem('username') || '';
 
 function formatOdds(odds: string | null): string {
   if (!odds) return '-';
@@ -133,6 +135,7 @@ function App() {
   const [bets, setBets] = useState<Bet[]>([]);
   const [balance, setBalance] = useState<string | null>(null);
   const [userId, setUserId] = useState(USER_ID);
+  const [username, setUsername] = useState(USERNAME);
   const [selectedGame, setSelectedGame] = useState<Game | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -167,10 +170,12 @@ function App() {
     }
   };
 
-  const handleLogin = async (username: string) => {
+  const handleLogin = async (inputUsername: string) => {
     try {
-      const user = await api.getOrCreateUser(username);
+      const user = await api.getOrCreateUser(inputUsername);
       setUserId(user.id);
+      setUsername(user.username);
+      localStorage.setItem('username', user.username);
       setError(null);
     } catch (err: unknown) {
       if (err instanceof Error) {
@@ -181,7 +186,9 @@ function App() {
 
   const handleLogout = () => {
     localStorage.removeItem('userId');
+    localStorage.removeItem('username');
     setUserId('');
+    setUsername('');
     setBalance(null);
     setBets([]);
   };
@@ -195,9 +202,10 @@ function App() {
       {error && <div className="global-error">{error}</div>}
 
       <Routes>
-        <Route element={<Layout balance={balance} onLogout={handleLogout} />}>
+        <Route element={<Layout balance={balance} username={username} onLogout={handleLogout} />}>
           <Route path="/" element={<GamesPage games={games} onPlaceBet={setSelectedGame} />} />
           <Route path="/bets" element={<BetsPage bets={bets} games={games} />} />
+          <Route path="/history" element={<HistoryPage bets={bets} games={games} />} />
         </Route>
       </Routes>
 

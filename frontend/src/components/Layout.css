@@ -70,6 +70,16 @@
   border-top: 1px solid #2a2a4a;
 }
 
+.user-info {
+  margin-bottom: 12px;
+}
+
+.username {
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+}
+
 .balance {
   display: flex;
   flex-direction: column;

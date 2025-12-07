@@ -1,6 +1,6 @@
 import type { Game, Bet } from '../api';
 
-interface BetsPageProps {
+interface HistoryPageProps {
   bets: Bet[];
   games: Game[];
 }
@@ -32,17 +32,17 @@ function BetCard({ bet, games }: { bet: Bet; games: Game[] }) {
   );
 }
 
-export function BetsPage({ bets, games }: BetsPageProps) {
-  const pendingBets = bets.filter(b => b.status === 'pending');
+export function HistoryPage({ bets, games }: HistoryPageProps) {
+  const settledBets = bets.filter(b => b.status !== 'pending');
 
   return (
     <div className="page">
-      <h2 className="page-title">Open Bets</h2>
+      <h2 className="page-title">Bet History</h2>
       <div className="bets-list">
-        {pendingBets.length === 0 ? (
-          <p className="empty-state">No open bets</p>
+        {settledBets.length === 0 ? (
+          <p className="empty-state">No settled bets yet</p>
         ) : (
-          pendingBets.map(bet => (
+          settledBets.map(bet => (
             <BetCard key={bet.id} bet={bet} games={games} />
           ))
         )}

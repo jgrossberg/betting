@@ -24,11 +24,14 @@ function formatDate(dateStr: string): string {
 }
 
 function GameCard({ game, onPlaceBet }: { game: Game; onPlaceBet: (game: Game) => void }) {
+  const isLocked = new Date(game.commence_time) < new Date();
+  const displayStatus = isLocked && game.status === 'upcoming' ? 'locked' : game.status;
+
   return (
     <div className="game-card">
       <div className="game-header">
         <span className="game-time">{formatDate(game.commence_time)}</span>
-        <span className={`game-status ${game.status}`}>{game.status}</span>
+        <span className={`game-status ${displayStatus}`}>{displayStatus}</span>
       </div>
       <div className="game-teams">
         <div className="team">
@@ -58,8 +61,12 @@ function GameCard({ game, onPlaceBet }: { game: Game; onPlaceBet: (game: Game) =
         </div>
       </div>
       {game.status === 'upcoming' && (
-        <button className="bet-button" onClick={() => onPlaceBet(game)}>
-          Place Bet
+        <button
+          className={`bet-button ${isLocked ? 'disabled' : ''}`}
+          onClick={() => !isLocked && onPlaceBet(game)}
+          disabled={isLocked}
+        >
+          {isLocked ? 'Locked' : 'Place Bet'}
         </button>
       )}
     </div>
