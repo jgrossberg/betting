@@ -55,6 +55,17 @@ def health_check():
     return {"status": "healthy"}
 
 
+def has_all_lines(game) -> bool:
+    """Check if game has all betting lines available."""
+    return all([
+        game.home_moneyline is not None,
+        game.away_moneyline is not None,
+        game.home_spread is not None,
+        game.away_spread is not None,
+        game.total_points is not None,
+    ])
+
+
 @app.get("/games", response_model=list[GameResponse])
 def list_games(
     status: GameStatus | None = None,
@@ -67,6 +78,9 @@ def list_games(
         games = game_repo.find_by_status(db_status)
     else:
         games = game_repo.find_by_status(GameStatus.UPCOMING)
+
+    # Filter out games without complete betting lines
+    games = [g for g in games if has_all_lines(g)]
 
     return games
 
