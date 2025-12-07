@@ -139,6 +139,20 @@ def get_user_balance(
     return BalanceResponse(user_id=user.id, balance=user.balance)
 
 
+@app.get("/users/by-username/{username}", response_model=UserResponse)
+def get_user_by_username(
+    username: str,
+    session: Session = Depends(get_session),
+):
+    user_repo = UserRepository(session)
+    user = user_repo.find_by_username(username)
+
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    return user
+
+
 @app.post("/users", response_model=UserResponse)
 def create_user(
     request: CreateUserRequest,

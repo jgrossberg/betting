@@ -80,11 +80,27 @@ class ApiClient {
     return this.request(`/users/${userId}/balance`);
   }
 
+  async getUserByUsername(username: string): Promise<User | null> {
+    try {
+      return await this.request<User>(`/users/by-username/${encodeURIComponent(username)}`);
+    } catch {
+      return null;
+    }
+  }
+
   async createUser(username: string, balance?: string): Promise<User> {
     return this.request<User>('/users', {
       method: 'POST',
       body: JSON.stringify({ username, balance }),
     });
+  }
+
+  async getOrCreateUser(username: string): Promise<User> {
+    const existing = await this.getUserByUsername(username);
+    if (existing) {
+      return existing;
+    }
+    return this.createUser(username);
   }
 
   async placeBet(

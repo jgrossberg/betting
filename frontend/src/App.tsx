@@ -169,7 +169,7 @@ function App() {
 
   const handleLogin = async (username: string) => {
     try {
-      const user = await api.createUser(username);
+      const user = await api.getOrCreateUser(username);
       setUserId(user.id);
       setError(null);
     } catch (err: unknown) {

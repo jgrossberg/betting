@@ -272,6 +272,32 @@ def test_create_user_duplicate_username(client):
     assert "already exists" in response.json()["detail"]
 
 
+def test_get_user_by_username(client, user):
+    response = client.get(f"/users/by-username/{user.username}")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["username"] == user.username
+    assert data["id"] == str(user.id)
+    assert data["balance"] == "1000.00"
+
+
+def test_get_user_by_username_not_found(client):
+    response = client.get("/users/by-username/nonexistent")
+    assert response.status_code == 404
+    assert "User not found" in response.json()["detail"]
+
+
+def test_get_user_by_username_special_chars(client):
+    # Create user with special characters
+    response = client.post("/users", json={"username": "user@test.com"})
+    assert response.status_code == 200
+
+    # Should be able to look up with URL encoding
+    response = client.get("/users/by-username/user%40test.com")
+    assert response.status_code == 200
+    assert response.json()["username"] == "user@test.com"
+
+
 def test_admin_fetch_games_requires_auth(client):
     response = client.post("/admin/fetch-games")
     assert response.status_code == 422
