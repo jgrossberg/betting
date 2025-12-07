@@ -30,7 +30,7 @@ class Bet(Base):
     status: Mapped[BetStatus] = mapped_column(
         Enum(BetStatus), nullable=False, default=BetStatus.PENDING
     )
-    settled_at: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
+    settled_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
 
     def __repr__(self):
         return f"<Bet(id={self.id}, type={self.bet_type.value}, stake={self.stake}, status={self.status.value})>"

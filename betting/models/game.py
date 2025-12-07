@@ -20,7 +20,7 @@ class Game(Base):
     home_team: Mapped[str] = mapped_column(String(100), nullable=False)
     away_team: Mapped[str] = mapped_column(String(100), nullable=False)
 
-    commence_time: Mapped[datetime] = mapped_column(DateTime, nullable=False)
+    commence_time: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
 
     # Moneyline odds (American format, e.g., +150, -110)
     home_moneyline: Mapped[Optional[Decimal]] = mapped_column(

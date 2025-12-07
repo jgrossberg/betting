@@ -13,12 +13,13 @@ function formatOdds(odds: string | null): string {
 
 function formatDate(dateStr: string): string {
   const date = new Date(dateStr);
-  return date.toLocaleDateString('en-US', {
+  return date.toLocaleString('en-US', {
     weekday: 'short',
     month: 'short',
     day: 'numeric',
     hour: 'numeric',
     minute: '2-digit',
+    timeZoneName: 'short',
   });
 }
 
@@ -66,14 +67,18 @@ function GameCard({ game, onPlaceBet }: { game: Game; onPlaceBet: (game: Game) =
 }
 
 export function GamesPage({ games, onPlaceBet }: GamesPageProps) {
+  const sortedGames = [...games].sort(
+    (a, b) => new Date(a.commence_time).getTime() - new Date(b.commence_time).getTime()
+  );
+
   return (
     <div className="page">
       <h2 className="page-title">Upcoming Games</h2>
       <div className="games-list">
-        {games.length === 0 ? (
+        {sortedGames.length === 0 ? (
           <p className="empty-state">No upcoming games</p>
         ) : (
-          games.map(game => (
+          sortedGames.map(game => (
             <GameCard key={game.id} game={game} onPlaceBet={onPlaceBet} />
           ))
         )}
