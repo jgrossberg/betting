@@ -1,9 +1,14 @@
+import logging
 from uuid import UUID
 from fastapi import FastAPI, HTTPException, Depends, Header
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
 from betting.database import get_database
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 from betting.config import config
 from betting.models.enums import BetSelection, BetType, GameStatus, BetStatus
 from betting.repositories import GameRepository, UserRepository
@@ -179,8 +184,14 @@ def admin_fetch_games(
     session: Session = Depends(get_session),
     _: None = Depends(verify_admin_key),
 ):
+    logger.info("Starting game sync...")
     sync_service = GameSyncService(session)
     result = sync_service.sync_games()
+
+    logger.info(
+        f"Game sync complete: {result['created']} created, "
+        f"{result['updated']} updated, {result['total']} total"
+    )
 
     return {
         "status": "success",
@@ -195,8 +206,18 @@ def admin_score_games(
     session: Session = Depends(get_session),
     _: None = Depends(verify_admin_key),
 ):
+    logger.info("Starting game scoring...")
     scoring_service = GameScoringService(session)
     updated_games = scoring_service.update_completed_games(days_from=2)
+
+    if updated_games:
+        for game in updated_games:
+            logger.info(
+                f"  Scored: {game.away_team} @ {game.home_team} -> "
+                f"{game.away_score}-{game.home_score}"
+            )
+
+    logger.info(f"Game scoring complete: {len(updated_games)} games updated")
 
     return {
         "status": "success",
@@ -209,8 +230,11 @@ def admin_settle_bets(
     session: Session = Depends(get_session),
     _: None = Depends(verify_admin_key),
 ):
+    logger.info("Starting bet settlement...")
     game_repo = GameRepository(session)
     finished_games = game_repo.find_games_with_pending_bets(GameStatus.COMPLETED)
+
+    logger.info(f"Found {len(finished_games)} completed games with pending bets")
 
     settlement_service = BetSettlementService(session)
     settled_bets = settlement_service.settle_bets_for_games(finished_games)
@@ -218,6 +242,11 @@ def admin_settle_bets(
     won_count = sum(1 for bet in settled_bets if bet.status == BetStatus.WON)
     lost_count = sum(1 for bet in settled_bets if bet.status == BetStatus.LOST)
     push_count = sum(1 for bet in settled_bets if bet.status == BetStatus.PUSH)
+
+    logger.info(
+        f"Bet settlement complete: {len(settled_bets)} bets settled "
+        f"({won_count} won, {lost_count} lost, {push_count} push)"
+    )
 
     return {
         "status": "success",
