@@ -33,33 +33,36 @@ function GameCard({ game, onPlaceBet }: { game: Game; onPlaceBet: (game: Game) =
         <span className="game-time">{formatDate(game.commence_time)}</span>
         <span className={`game-status ${displayStatus}`}>{displayStatus}</span>
       </div>
-      <div className="game-teams">
-        <div className="team">
-          <span className="team-name">{game.away_team}</span>
-          {game.away_score !== null && <span className="score">{game.away_score}</span>}
-        </div>
-        <div className="team">
-          <span className="team-name">{game.home_team}</span>
-          {game.home_score !== null && <span className="score">{game.home_score}</span>}
-        </div>
-      </div>
-      <div className="game-odds">
-        <div className="odds-row">
-          <span className="odds-label">Moneyline</span>
-          <span className="odds-value">{formatOdds(game.away_moneyline)}</span>
-          <span className="odds-value">{formatOdds(game.home_moneyline)}</span>
-        </div>
-        <div className="odds-row">
-          <span className="odds-label">Spread</span>
-          <span className="odds-value">{game.away_spread} ({formatOdds(game.away_spread_odds)})</span>
-          <span className="odds-value">{game.home_spread} ({formatOdds(game.home_spread_odds)})</span>
-        </div>
-        <div className="odds-row">
-          <span className="odds-label">O/U {game.total_points}</span>
-          <span className="odds-value">O {formatOdds(game.over_odds)}</span>
-          <span className="odds-value">U {formatOdds(game.under_odds)}</span>
-        </div>
-      </div>
+      <table className="game-table">
+        <thead>
+          <tr>
+            <th className="col-team">Team</th>
+            <th>Spread</th>
+            <th>Money</th>
+            <th>O/U {game.total_points}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td className="team-cell">
+              <span className="team-name">{game.away_team}</span>
+              {game.away_score !== null && <span className="score">{game.away_score}</span>}
+            </td>
+            <td className="odds-cell">{game.away_spread} ({formatOdds(game.away_spread_odds)})</td>
+            <td className="odds-cell">{formatOdds(game.away_moneyline)}</td>
+            <td className="odds-cell">O {formatOdds(game.over_odds)}</td>
+          </tr>
+          <tr>
+            <td className="team-cell">
+              <span className="team-name">{game.home_team}</span>
+              {game.home_score !== null && <span className="score">{game.home_score}</span>}
+            </td>
+            <td className="odds-cell">{game.home_spread} ({formatOdds(game.home_spread_odds)})</td>
+            <td className="odds-cell">{formatOdds(game.home_moneyline)}</td>
+            <td className="odds-cell">U {formatOdds(game.under_odds)}</td>
+          </tr>
+        </tbody>
+      </table>
       {game.status === 'upcoming' && (
         <button
           className={`bet-button ${isLocked ? 'disabled' : ''}`}

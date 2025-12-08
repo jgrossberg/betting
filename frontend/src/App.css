@@ -5,8 +5,8 @@
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: #1a1a2e;
-  color: #eee;
+  background: #212529;
+  color: #ffffff;
 }
 
 /* Page styles */
@@ -24,7 +24,7 @@ body {
   margin: 0 0 12px 0;
   font-size: 14px;
   font-weight: 600;
-  color: #888;
+  color: #8a9ba8;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -35,18 +35,19 @@ body {
 
 .empty-state {
   text-align: center;
-  color: #888;
+  color: #8a9ba8;
   padding: 48px 24px;
-  background: #2a2a4a;
+  background: #2d3339;
   border-radius: 12px;
 }
 
 /* Game Card */
 .game-card {
-  background: #2a2a4a;
+  background: #2d3339;
   border-radius: 12px;
   padding: 16px;
   margin-bottom: 12px;
+  max-width: 700px;
 }
 
 .game-header {
@@ -57,7 +58,7 @@ body {
 }
 
 .game-time {
-  color: #888;
+  color: #8a9ba8;
 }
 
 .game-status {
@@ -68,66 +69,76 @@ body {
 }
 
 .game-status.upcoming {
-  background: #4a4a8a;
-  color: #aaf;
+  background: rgba(190, 239, 158, 0.2);
+  color: #beef9e;
 }
 
 .game-status.in_progress {
-  background: #4a8a4a;
-  color: #afa;
+  background: rgba(66, 129, 164, 0.2);
+  color: #4281a4;
 }
 
 .game-status.completed {
-  background: #8a4a4a;
-  color: #faa;
+  background: rgba(138, 155, 168, 0.2);
+  color: #8a9ba8;
 }
 
 .game-status.locked {
-  background: #5a4a5a;
-  color: #dab;
+  background: rgba(138, 155, 168, 0.2);
+  color: #8a9ba8;
 }
 
-.game-teams {
-  margin-bottom: 12px;
+/* Game Table */
+.game-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 4px;
 }
 
-.team {
+.game-table th {
+  font-size: 11px;
+  font-weight: 500;
+  color: #8a9ba8;
+  text-transform: uppercase;
+  padding: 0 0 8px 0;
+  text-align: center;
+}
+
+.game-table th.col-team {
+  text-align: left;
+}
+
+.game-table td {
+  padding: 10px 0;
+  vertical-align: middle;
+}
+
+.team-cell {
   display: flex;
-  justify-content: space-between;
-  padding: 8px 0;
-  font-size: 18px;
+  align-items: center;
+  gap: 12px;
+  padding-right: 24px;
+  min-width: 200px;
 }
 
 .team-name {
   font-weight: 500;
+  font-size: 16px;
+  white-space: nowrap;
 }
 
 .score {
   font-weight: bold;
-  color: #4ade80;
+  color: #4281a4;
 }
 
-.game-odds {
-  border-top: 1px solid #3a3a5a;
-  padding-top: 12px;
-}
-
-.odds-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 8px;
-  padding: 6px 0;
-  font-size: 14px;
-}
-
-.odds-label {
-  color: #888;
-}
-
-.odds-value {
+.odds-cell {
   text-align: center;
-  color: #4ade80;
+  color: #beef9e;
   font-weight: 600;
+  font-size: 14px;
+  padding: 10px 16px;
+  min-width: 90px;
 }
 
 .bet-button {
@@ -135,7 +146,7 @@ body {
   padding: 12px;
   margin-top: 12px;
   border: none;
-  background: #6366f1;
+  background: #4281a4;
   color: white;
   font-size: 16px;
   font-weight: 600;
@@ -145,39 +156,39 @@ body {
 }
 
 .bet-button:hover:not(:disabled) {
-  background: #4f46e5;
+  background: #356d8a;
 }
 
 .bet-button.disabled,
 .bet-button:disabled {
-  background: #5a4a5a;
-  color: #a99;
+  background: #3d444d;
+  color: #6b7280;
   cursor: not-allowed;
 }
 
 /* Bet Card */
 .bet-card {
-  background: #2a2a4a;
+  background: #2d3339;
   border-radius: 12px;
   padding: 16px;
   margin-bottom: 12px;
-  border-left: 4px solid #888;
+  border-left: 4px solid #8a9ba8;
 }
 
 .bet-card.pending {
-  border-left-color: #f59e0b;
+  border-left-color: #4281a4;
 }
 
 .bet-card.won {
-  border-left-color: #4ade80;
+  border-left-color: #beef9e;
 }
 
 .bet-card.lost {
-  border-left-color: #ef4444;
+  border-left-color: #c1666b;
 }
 
 .bet-card.push {
-  border-left-color: #888;
+  border-left-color: #8a9ba8;
 }
 
 .bet-header {
@@ -189,7 +200,7 @@ body {
 .bet-type {
   text-transform: uppercase;
   font-size: 12px;
-  color: #888;
+  color: #8a9ba8;
 }
 
 .bet-status {
@@ -198,10 +209,10 @@ body {
   font-weight: 600;
 }
 
-.bet-status.pending { color: #f59e0b; }
-.bet-status.won { color: #4ade80; }
-.bet-status.lost { color: #ef4444; }
-.bet-status.push { color: #888; }
+.bet-status.pending { color: #4281a4; }
+.bet-status.won { color: #beef9e; }
+.bet-status.lost { color: #c1666b; }
+.bet-status.push { color: #8a9ba8; }
 
 .bet-details {
   font-size: 14px;
@@ -218,7 +229,7 @@ body {
   font-size: 16px;
   font-weight: 600;
   padding-top: 8px;
-  border-top: 1px solid #3a3a5a;
+  border-top: 1px solid #3d444d;
 }
 
 /* Modal */
@@ -237,7 +248,7 @@ body {
 }
 
 .modal {
-  background: #2a2a4a;
+  background: #2d3339;
   border-radius: 16px;
   padding: 24px;
   width: 100%;
@@ -249,7 +260,7 @@ body {
 }
 
 .modal > p {
-  color: #888;
+  color: #8a9ba8;
   margin: 0 0 16px 0;
 }
 
@@ -261,16 +272,16 @@ body {
   display: block;
   margin-bottom: 6px;
   font-size: 14px;
-  color: #888;
+  color: #8a9ba8;
 }
 
 .form-group select,
 .form-group input {
   width: 100%;
   padding: 12px;
-  border: 1px solid #3a3a5a;
+  border: 1px solid #3d444d;
   border-radius: 8px;
-  background: #1a1a2e;
+  background: #212529;
   color: #fff;
   font-size: 16px;
 }
@@ -278,11 +289,11 @@ body {
 .form-group select:focus,
 .form-group input:focus {
   outline: none;
-  border-color: #6366f1;
+  border-color: #4281a4;
 }
 
 .bet-summary {
-  background: #1a1a2e;
+  background: #212529;
   padding: 12px;
   border-radius: 8px;
   margin-bottom: 16px;
@@ -309,17 +320,17 @@ body {
 }
 
 .cancel-button {
-  background: #3a3a5a;
+  background: #3d444d;
   color: #fff;
 }
 
 .submit-button {
-  background: #6366f1;
+  background: #4281a4;
   color: #fff;
 }
 
 .submit-button:hover {
-  background: #4f46e5;
+  background: #356d8a;
 }
 
 /* Login Page */
@@ -332,7 +343,7 @@ body {
 }
 
 .login-card {
-  background: #2a2a4a;
+  background: #2d3339;
   border-radius: 16px;
   padding: 48px;
   width: 100%;
@@ -347,7 +358,7 @@ body {
 }
 
 .login-subtitle {
-  color: #888;
+  color: #8a9ba8;
   margin: 0 0 32px 0;
 }
 
@@ -359,9 +370,9 @@ body {
 
 .login-form input {
   padding: 16px;
-  border: 1px solid #3a3a5a;
+  border: 1px solid #3d444d;
   border-radius: 8px;
-  background: #1a1a2e;
+  background: #212529;
   color: #fff;
   font-size: 16px;
   text-align: center;
@@ -369,13 +380,13 @@ body {
 
 .login-form input:focus {
   outline: none;
-  border-color: #6366f1;
+  border-color: #4281a4;
 }
 
 .login-form button {
   padding: 16px;
   border: none;
-  background: #6366f1;
+  background: #4281a4;
   color: white;
   font-size: 16px;
   font-weight: 600;
@@ -384,13 +395,13 @@ body {
 }
 
 .login-form button:hover {
-  background: #4f46e5;
+  background: #356d8a;
 }
 
 /* Error */
 .error {
-  background: #7f1d1d;
-  color: #fca5a5;
+  background: rgba(193, 102, 107, 0.2);
+  color: #e8a5a8;
   padding: 12px;
   border-radius: 8px;
   margin-top: 16px;
@@ -401,8 +412,8 @@ body {
   top: 16px;
   left: 50%;
   transform: translateX(-50%);
-  background: #7f1d1d;
-  color: #fca5a5;
+  background: #c1666b;
+  color: #ffffff;
   padding: 12px 24px;
   border-radius: 8px;
   z-index: 1000;

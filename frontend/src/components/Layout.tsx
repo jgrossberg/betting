@@ -29,18 +29,9 @@ export function Layout({ balance, username, onLogout }: LayoutProps) {
         </div>
 
         <nav className="sidebar-nav">
-          <NavLink to="/" onClick={() => setSidebarOpen(false)}>
-            <span className="nav-icon">&#9917;</span>
-            Games
-          </NavLink>
-          <NavLink to="/bets" onClick={() => setSidebarOpen(false)}>
-            <span className="nav-icon">&#9741;</span>
-            Open Bets
-          </NavLink>
-          <NavLink to="/history" onClick={() => setSidebarOpen(false)}>
-            <span className="nav-icon">&#128218;</span>
-            History
-          </NavLink>
+          <NavLink to="/" onClick={() => setSidebarOpen(false)}>Games</NavLink>
+          <NavLink to="/bets" onClick={() => setSidebarOpen(false)}>Open Bets</NavLink>
+          <NavLink to="/history" onClick={() => setSidebarOpen(false)}>History</NavLink>
         </nav>
 
         <div className="sidebar-footer">
