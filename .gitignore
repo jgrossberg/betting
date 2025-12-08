@@ -13,8 +13,6 @@ dist/
 build/
 *.egg
 
-# My Specs
-docs/
 
 # Virtual environments
 venv/

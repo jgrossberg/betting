@@ -1,4 +1,4 @@
-# FreeBet
+# BetLab
 
 A free sports betting platform for testing strategies and models against real odds. No money, no risk.
 
