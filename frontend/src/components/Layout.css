@@ -6,7 +6,7 @@
 /* Sidebar */
 .sidebar {
   width: 240px;
-  background: #1e1e3f;
+  background: #1a1d20;
   display: flex;
   flex-direction: column;
   position: fixed;
@@ -18,7 +18,7 @@
 
 .sidebar-header {
   padding: 24px 20px;
-  border-bottom: 1px solid #2a2a4a;
+  border-bottom: 1px solid #3d444d;
 }
 
 .sidebar-header h1 {
@@ -37,37 +37,29 @@
 }
 
 .sidebar-nav a {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+  display: block;
   padding: 12px 16px;
-  color: #888;
+  color: #8a9ba8;
   text-decoration: none;
   border-radius: 8px;
   font-size: 15px;
-  font-weight: 500;
+  font-weight: 600;
   transition: all 0.2s;
 }
 
 .sidebar-nav a:hover {
-  background: #2a2a4a;
-  color: #ccc;
+  background: #2d3339;
+  color: #ffffff;
 }
 
 .sidebar-nav a.active {
-  background: #6366f1;
+  background: #4281a4;
   color: #fff;
-}
-
-.nav-icon {
-  font-size: 18px;
-  width: 24px;
-  text-align: center;
 }
 
 .sidebar-footer {
   padding: 20px;
-  border-top: 1px solid #2a2a4a;
+  border-top: 1px solid #3d444d;
 }
 
 .user-info {
@@ -88,7 +80,7 @@
 
 .balance-label {
   font-size: 12px;
-  color: #888;
+  color: #8a9ba8;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -96,15 +88,15 @@
 .balance-amount {
   font-size: 24px;
   font-weight: 700;
-  color: #4ade80;
+  color: #beef9e;
 }
 
 .logout-button {
   width: 100%;
   padding: 10px;
   background: transparent;
-  border: 1px solid #3a3a5a;
-  color: #888;
+  border: 1px solid #3d444d;
+  color: #8a9ba8;
   border-radius: 6px;
   cursor: pointer;
   font-size: 14px;
@@ -112,9 +104,9 @@
 }
 
 .logout-button:hover {
-  background: #2a2a4a;
+  background: #2d3339;
   color: #fff;
-  border-color: #4a4a6a;
+  border-color: #fff;
 }
 
 /* Main content */
@@ -131,7 +123,7 @@
   top: 16px;
   left: 16px;
   z-index: 200;
-  background: #2a2a4a;
+  background: #2d3339;
   border: none;
   border-radius: 8px;
   padding: 12px;
