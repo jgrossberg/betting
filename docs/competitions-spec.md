@@ -2,260 +2,262 @@
 
 ## Overview
 
-Competitions allow groups of friends to compete against each other in betting performance over a defined period. Since all bets carry negative EV (house edge), the accumulated "rake" is pooled and redistributed as prizes.
+Competitions let friends compete on betting performance. The core loop: create a challenge, place bets within the challenge window, whoever profits most wins. Losing bets generate XP, which can be redeemed for strategic advantages.
 
 ---
 
-## Core Problems to Solve
+## MVP: Challenges
 
-### 1. Everyone Eventually Goes Broke
-With negative EV on every bet, all users will eventually lose their entire balance. Need mechanisms to keep the game going:
+### How It Works
 
-**Options:**
-- **Daily/Weekly credits** - Auto-replenish X credits on a schedule
-- **Minimum balance refill** - When balance drops below threshold (e.g., $10), auto-refill to starting amount
-- **Season reset** - Everyone starts fresh at beginning of each season/competition
-- **Earn through engagement** - Bonus credits for daily logins, placing bets, streaks
-- **Request refill** - Manual "rebuy" button (maybe limited per week)
+1. **Create a Challenge** - Pick a duration (1 day or 1 week)
+2. **Eligible Games** - Any game with `commence_time` within the challenge window
+3. **Place Bets** - Tag bets to the challenge (untagged bets = season grind)
+4. **Winner** - Highest net profit when challenge ends
+5. **Tiebreaker** - Longest odds winning bet
 
-**Recommendation:** Combine minimum balance refill (keeps people playing) with season resets (clean slate for competitions).
+### Challenge Rules
 
-### 💡 XP System - "Win or Learn"
-Lost bets convert to XP based on stake amount. You either win money or gain experience.
+- **Open join** - Anyone can join at any time during the challenge
+- **No buy-in** - Pure competition on skill/picks
+- **Multi-player** - Not limited to 1v1, can be H2H2H2H...
+- **Winner takes all** - Bragging rights to #1
 
-**How it works:**
-- **Win:** Receive payout as normal
-- **Lose:** Stake converts to XP (e.g., $50 stake → 50 XP)
-- **Push:** Stake returned, no XP
+### Data Model
 
-**XP Redemption:**
-- Convert XP back to credits at some rate (e.g., 100 XP = $10)
-- Creates a floor - you can never truly go broke
-- Rewards volume/engagement even during losing streaks
+```
+Challenge:
+  id: UUID
+  name: string
+  created_by: UUID (user_id)
+  duration_type: enum (DAY, WEEK)
+  start_date: datetime
+  end_date: datetime
+  status: enum (OPEN, ACTIVE, COMPLETED)
+  winner_id: UUID (nullable, set when challenge ends)
+  created_at: datetime
+  updated_at: datetime
+```
 
-**XP Multipliers (optional):**
-- Underdog wins: 1.5x XP bonus
-- Streak bonuses: Consecutive bets = multiplier
-- Competition participation: Bonus XP for being in active competition
+```
+ChallengeParticipant:
+  id: UUID
+  challenge_id: UUID
+  user_id: UUID
+  joined_at: datetime
+  net_profit: decimal (calculated/cached)
+  total_bets: int
+  wins: int
+  losses: int
+```
 
-**Data Model:**
+```
+Bet (add field):
+  + challenge_id: UUID (nullable - if part of a challenge)
+```
+
+---
+
+## XP System - "Win or Learn"
+
+You either win money or gain experience. Never both.
+
+### How It Works
+
+- **Win** - Receive payout as normal, no XP
+- **Lose** - Stake converts to XP (e.g., $100 stake → 100 XP)
+- **Push** - Stake returned, no XP
+
+### Why This Matters
+
+- Creates comeback opportunities without rewarding losing
+- Strategic depth in choosing chip conversion vs betting advantages
+- 75% conversion rate maintains competitiveness
+- Losing still stings, but you're building toward something
+
+### Data Model
+
 ```
 User (add fields):
-+ xp_balance: int            # Current XP
-+ xp_lifetime: int           # All-time XP earned
+  + xp_balance: int           # Current spendable XP
+  + xp_lifetime: int          # All-time XP earned
+```
 
+```
 XPTransaction:
   id: UUID
   user_id: UUID
-  amount: int
-  type: enum (BET_LOSS, REDEMPTION, BONUS, MULTIPLIER)
-  source_bet_id: UUID        # nullable - links to bet if from loss
+  amount: int                 # Positive = earned, negative = spent
+  type: enum (BET_LOSS, CHIP_CONVERSION, ADVANTAGE_PURCHASE)
+  source_bet_id: UUID         # Nullable - links to bet if from loss
+  description: string         # Human-readable note
   created_at: datetime
 ```
-
-This elegantly solves the "everyone goes broke" problem while reinforcing the learning aspect of the platform.
-
-**XP Uses:**
-1. **Redeem for credits** - 100 XP → $10 playable balance
-2. **Sabotage bets** - Place bets on opponent's behalf (see below)
-3. **Power-ups** - Unlock boosts, streak shields, etc. (future)
-
-### 🎯 Sabotage Bets (Competition Feature)
-In H2H competitions, spend XP to place bets using your opponent's money.
-
-**How it works:**
-- Costs XP to place (e.g., 50 XP → force a $5 bet)
-- Bet uses opponent's balance, not yours
-- Opponent sees the bet tagged as "Sabotage" + who did it
-- Win/loss affects opponent's P/L normally
-
-**Strategy implications:**
-- Force opponent onto heavy favorites (low upside)
-- Make them take the other side of a game you like
-- Drain their balance on -EV longshots
-- Timing matters - use before game locks
-
-**Limits & Balance:**
-- Max sabotage bets per opponent per week (e.g., 2-3)
-- Minimum opponent balance required (can't bankrupt someone with sabotage)
-- Maybe opponent can "block" with their own XP spend?
-
-**Data Model:**
-```
-SabotageBet:
-  id: UUID
-  competition_id: UUID
-  placed_by_user_id: UUID    # Who spent the XP
-  target_user_id: UUID       # Whose money is on the line
-  bet_id: UUID               # The actual bet created
-  xp_cost: int
-  created_at: datetime
-```
-
-This adds a whole psychological warfare layer to H2H competitions.
-
-### 2. House Money Not Tracked
-Currently we don't track the rake/vig the house collects. Need this for:
-- Prize pool accumulation
-- Analytics (how much edge are we simulating?)
-- Leaderboards that account for volume
-
-**Implementation:**
-- Calculate rake on each bet at placement time
-- Store `house_rake` field on Bet model
-- Accumulate into Competition prize_pool (or global pool)
-- Track per-user rake contributed for volume-based rewards
 
 ---
 
-## Competition Types
+## XP Advantages
 
-### Season League
-- Runs for an entire NBA season (or custom date range)
-- Leaderboard ranked by net P/L
-- Winner takes the prize pool or tiered payouts (1st/2nd/3rd)
+Spend XP on strategic advantages instead of converting to chips.
 
-### Weekly H2H
-- Head-to-head matchups each week
-- Bracket or round-robin format
-- Winner determined by weekly P/L
-- Playoffs at end of season
+| Advantage | Description | XP Cost (TBD) |
+|-----------|-------------|---------------|
+| **Chip Conversion** | Convert XP to playable dollars at 75% rate | N/A (rate-based) |
+| **Buy Points** | Adjust spread/total by 0.5-2 points on a bet | TBD |
+| **Reduced Vig** | Get -105 instead of -110 on a bet | TBD |
+| **Bad Beat Insurance** | Partial refund if you lose by < 1 point | TBD |
+| **Teasers** | Move lines on 2+ legs (reduced payout) | TBD |
+| **Line Lock** | Lock current line, place bet later | TBD |
 
-## Data Models
+### Chip Conversion
 
-### Bet (existing - add fields)
 ```
-+ house_rake: decimal        # Calculated vig on this bet
-+ competition_id: UUID       # Optional - if bet is part of a competition
-```
-
-### HouseAccount (global tracking)
-```
-id: UUID
-total_rake: decimal          # All-time accumulated rake
-period_rake: decimal         # Current period (reset weekly/monthly)
-last_reset_at: datetime
+Convert XP → Playable Dollars at 75% rate
+Example: 100 XP → $75 added to balance
 ```
 
-### Competition
-```
-id: UUID
-name: string
-type: enum (SEASON_LEAGUE, WEEKLY_H2H)
-created_by: UUID (user_id)
-start_date: datetime
-end_date: datetime
-status: enum (PENDING, ACTIVE, COMPLETED)
-prize_pool: decimal (accumulated house rake)
-created_at: datetime
-updated_at: datetime
-```
+### Advantage Details (Future Implementation)
 
-### CompetitionMember
-```
-id: UUID
-competition_id: UUID
-user_id: UUID
-joined_at: datetime
-starting_balance: decimal (snapshot at join)
-```
+**Buy Points:**
+- Move spread or total by 0.5 to 2 points
+- Cost scales with points bought
+- Must be applied at bet placement
 
-### CompetitionWeek
-For H2H format - defines weekly matchups
-```
-id: UUID
-competition_id: UUID
-week_number: int
-start_date: datetime
-end_date: datetime
-```
+**Reduced Vig:**
+- Single bet gets -105 odds instead of -110
+- One-time use per bet
 
-### WeeklyMatchup
-```
-id: UUID
-competition_week_id: UUID
-user_1_id: UUID
-user_2_id: UUID
-winner_id: UUID (nullable, set when week ends)
-user_1_pl: decimal
-user_2_pl: decimal
-```
+**Bad Beat Insurance:**
+- If bet loses by margin < 1 point (covers the hook)
+- Refund 50% of stake as XP or credits
 
-### CompetitionSnapshot
-Weekly/periodic snapshots of member standings
-```
-id: UUID
-competition_id: UUID
-user_id: UUID
-snapshot_date: datetime
-balance: decimal
-net_pl: decimal
-total_staked: decimal
-total_bets: int
-win_count: int
-loss_count: int
-```
+**Teasers:**
+- Combine 2+ bets with adjusted lines
+- Each leg moves 6 points (NFL) or 4 points (NBA)
+- All legs must hit
 
-## House Rake & Prize Pool
+**Line Lock:**
+- Snapshot current line for a game
+- Place bet later using locked line
+- Expires at game start
 
-### How It Works
-1. Every bet placed has built-in vig (e.g., -110 odds on both sides)
-2. Calculate theoretical house edge on each bet
-3. Accumulate rake into competition's prize_pool
-4. Redistribute at competition end (or weekly)
-
-### Rake Calculation
-For standard -110/-110 lines:
-- True probability: 50% each side
-- Implied probability at -110: 52.4%
-- House edge: ~4.5% per bet
-- Rake per bet = stake × 0.045 (approximately)
-
-### Prize Distribution Options
-1. **Winner takes all** - 100% to first place
-2. **Tiered** - 60/30/10 to top 3
-3. **Volume bonus** - Percentage to highest volume staker
-4. **Weekly prizes** - Distribute rake each week
+---
 
 ## API Endpoints
 
-### Competitions
-- `POST /competitions` - Create competition
-- `GET /competitions` - List user's competitions
-- `GET /competitions/{id}` - Competition details + leaderboard
-- `POST /competitions/{id}/join` - Join a competition
-- `POST /competitions/{id}/invite` - Invite users (generates invite code)
-- `GET /competitions/{id}/standings` - Current standings
-- `GET /competitions/{id}/weeks` - Weekly breakdown (H2H)
+### Challenges
 
-### Admin
-- `POST /admin/competitions/{id}/advance-week` - Process weekly H2H matchups
-- `POST /admin/competitions/{id}/finalize` - End competition, distribute prizes
+```
+POST   /challenges              # Create a challenge
+GET    /challenges              # List challenges (filter: mine, open, completed)
+GET    /challenges/:id          # Challenge details + leaderboard
+POST   /challenges/:id/join     # Join a challenge
+GET    /challenges/:id/bets     # All bets in this challenge
+```
+
+### XP
+
+```
+GET    /users/:id/xp            # XP balance and history
+POST   /xp/convert              # Convert XP to chips (75% rate)
+POST   /xp/purchase-advantage   # Buy an advantage (future)
+```
+
+### Bets (modify existing)
+
+```
+POST   /bets                    # Add optional challenge_id field
+```
+
+---
 
 ## Frontend Views
 
-### Competition Lobby
-- List of active competitions
-- Create new competition
-- Join via invite code
+### Challenge Lobby
+- List of open challenges to join
+- Create new challenge button
+- Filter: My Challenges, Open, Completed
 
-### Competition Dashboard
-- Leaderboard with P/L, record, volume
-- Prize pool tracker
-- Weekly matchup bracket (H2H mode)
-- Member activity feed
+### Challenge Detail
+- Leaderboard (profit, bets, win rate)
+- Time remaining
+- Eligible games list
+- Quick bet placement
 
-### My Competition Stats
-- Personal performance vs group
-- Week-over-week trends
-- Head-to-head record
+### XP Dashboard
+- Current balance
+- Transaction history
+- Conversion calculator
+- Available advantages (future)
 
-## Future Considerations
+---
 
-1. **Entry fees** - Members contribute to prize pool on join
-2. **Private/Public** - Public competitions anyone can join
-3. **Achievements** - Badges for streaks, upsets, etc.
-4. **Chat/Trash talk** - Social features within competition
-5. **Pick visibility** - Option to hide/reveal picks in real-time or after lock
-6. **Survivor pools** - Eliminate lowest performer each week
-7. **Best bet contests** - One pick per day/week, highest confidence
+## Future: Leagues
+
+Structured season-long competition with weekly H2H matchups.
+
+### How It Works (Stubbed)
+
+- Season runs for defined period (e.g., NFL season)
+- Each week, participants are matched H2H
+- Weekly winner gets a "win" in standings
+- End of season: playoffs or best record wins
+
+### Data Model (Stubbed)
+
+```
+League:
+  id: UUID
+  name: string
+  season_start: datetime
+  season_end: datetime
+  status: enum (PENDING, ACTIVE, COMPLETED)
+```
+
+```
+LeagueMember:
+  id: UUID
+  league_id: UUID
+  user_id: UUID
+  wins: int
+  losses: int
+```
+
+```
+LeagueWeek:
+  id: UUID
+  league_id: UUID
+  week_number: int
+  start_date: datetime
+  end_date: datetime
+```
+
+```
+LeagueMatchup:
+  id: UUID
+  league_week_id: UUID
+  user_1_id: UUID
+  user_2_id: UUID
+  user_1_profit: decimal
+  user_2_profit: decimal
+  winner_id: UUID (nullable)
+```
+
+### Future Features
+- Podium recognition (1st/2nd/3rd)
+- H2H matrix (everyone plays everyone)
+- Playoff brackets
+- Division/conference structure
+
+---
+
+## Implementation Order
+
+1. **Challenge CRUD** - Create, join, list challenges
+2. **Bet tagging** - Add challenge_id to bets
+3. **Leaderboard** - Calculate standings from tagged bets
+4. **Challenge completion** - Auto-determine winner at end_date
+5. **XP generation** - Award XP on losing bets
+6. **XP conversion** - Convert to chips at 75%
+7. **XP advantages** - Individual advantage implementations
+8. **Leagues** - Season structure with weekly matchups
