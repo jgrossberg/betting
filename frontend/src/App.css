@@ -421,6 +421,185 @@ body {
 
 /* Lists */
 .games-list,
-.bets-list {
+.bets-list,
+.open-bets-list {
   min-height: 200px;
+}
+
+/* Open Bet Card */
+.open-bet-card {
+  background: linear-gradient(135deg, #2d3339 0%, #363d44 100%);
+  border-radius: 16px;
+  padding: 18px 24px;
+  margin-bottom: 16px;
+  max-width: 900px;
+  border: 1px solid #3d444d;
+  position: relative;
+  overflow: hidden;
+}
+
+.open-bet-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #4281a4, #5a9cc4);
+}
+
+.open-bet-card.starting-soon::before {
+  background: linear-gradient(90deg, #beef9e, #9fd88a);
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.open-bet-time {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.time-relative {
+  background: #4281a4;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.open-bet-card.starting-soon .time-relative {
+  background: #beef9e;
+  color: #1a1a1a;
+}
+
+.time-absolute {
+  color: #8a9ba8;
+  font-size: 14px;
+}
+
+.open-bet-matchup {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #fff;
+}
+
+.open-bet-picks {
+  background: rgba(66, 129, 164, 0.1);
+  border: 1px solid rgba(66, 129, 164, 0.25);
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin-bottom: 14px;
+}
+
+.picks-header {
+  font-size: 11px;
+  font-weight: 600;
+  color: #8a9ba8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.picks-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.picks-table th {
+  font-size: 10px;
+  font-weight: 500;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  padding: 0 0 6px 0;
+  text-align: left;
+  border-bottom: 1px solid rgba(66, 129, 164, 0.2);
+}
+
+.picks-table td {
+  padding: 8px 0;
+  font-size: 14px;
+  border-bottom: 1px solid rgba(66, 129, 164, 0.1);
+}
+
+.picks-table tr:last-child td {
+  border-bottom: none;
+}
+
+.picks-table .col-type {
+  width: 70px;
+  color: #8a9ba8;
+  font-weight: 500;
+}
+
+.picks-table .col-selection {
+  font-weight: 600;
+  color: #fff;
+}
+
+.picks-table .col-odds {
+  width: 80px;
+  font-weight: 700;
+  color: #beef9e;
+  text-align: right;
+}
+
+.picks-table .col-stake {
+  width: 90px;
+  text-align: right;
+  color: #fff;
+}
+
+.picks-table .col-payout {
+  width: 100px;
+  text-align: right;
+  font-weight: 600;
+  color: #beef9e;
+}
+
+.open-bet-totals {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.totals-stake,
+.totals-win {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.totals-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: #8a9ba8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.totals-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.totals-value.highlight {
+  color: #beef9e;
+}
+
+.totals-arrow {
+  font-size: 18px;
+  color: #4d5660;
+  margin-top: 10px;
 }
