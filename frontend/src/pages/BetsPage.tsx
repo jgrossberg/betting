@@ -134,26 +134,6 @@ function OpenBetCard({ bets, game }: { bets: Bet[]; game: Game | undefined }) {
   );
 }
 
-function BetCard({ bet, games }: { bet: Bet; games: Game[] }) {
-  const game = games.find(g => g.id === bet.game_id);
-  return (
-    <div className={`bet-card ${bet.status}`}>
-      <div className="bet-header">
-        <span className="bet-type">{bet.bet_type.replace('_', '/')}</span>
-        <span className={`bet-status ${bet.status}`}>{bet.status}</span>
-      </div>
-      <div className="bet-details">
-        <div>{game ? `${game.away_team} @ ${game.home_team}` : 'Unknown game'}</div>
-        <div>Selection: {bet.selection}</div>
-        <div>Odds: {formatOdds(bet.odds)}</div>
-      </div>
-      <div className="bet-amounts">
-        <span>Stake: ${bet.stake}</span>
-        <span>To win: ${bet.potential_payout}</span>
-      </div>
-    </div>
-  );
-}
 
 export function BetsPage({ bets, games }: BetsPageProps) {
   const pendingBets = bets.filter(b => b.status === 'pending');
